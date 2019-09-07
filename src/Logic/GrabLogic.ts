@@ -44,7 +44,7 @@ export class GrabLogic extends Common.EventDispather {
         this.HandClass = new RigidObject(this.Hand);
         this.addCollisionScript();
         Laya.stage.on(Laya.Event.CLICK, this, this.moveHand);
-        // Laya.stage.on(Laya.Event.DOUBLE_CLICK, this, this.restart);
+        Laya.stage.on(Laya.Event.DOUBLE_CLICK, this, this.restart);
 
         this.IsInited = true;
         this.moveDesk();
@@ -67,7 +67,9 @@ export class GrabLogic extends Common.EventDispather {
 
     private restart(){
         this.deskScript.clearStatus();
-        // this.moveDesk();
+        this.HandClass.State = Manager.StateBase.IDEL;
+        this.moveDesk();
+        this.resetHand();
     }
 
     private moveDesk(){
@@ -76,10 +78,11 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private resetDesk(){
-        this.deskScript.clearStatus();
-        // this.DeskClass.Rigid3D.linearVelocity = Laya.Vector3._ZERO;
         this.DeskClass.Obj.transform.position = DESK_POS;
-        // this.DeskClass.State = Manager.StateBase.IDEL;
+    }
+
+    private stopDesk(){
+        this.DeskClass.State = Manager.StateBase.STOP;
     }
 
     private deskDown(){
@@ -88,6 +91,10 @@ export class GrabLogic extends Common.EventDispather {
         let vec = this.DeskClass.Obj.transform.position;
         vec.y -= 0.3;
         this.DeskClass.Obj.transform.position = vec;
+
+        if(vec.y <= DESK_END_POS.y){
+            this.DeskClass.State = Manager.StateBase.MOVE_BACK;
+        }
     }
 
     private deskUp(){
@@ -96,10 +103,20 @@ export class GrabLogic extends Common.EventDispather {
         let vec = this.DeskClass.Obj.transform.position;
         vec.y += 0.3;
         this.DeskClass.Obj.transform.position = vec;
+
+        if(vec.y >= DESK_POS.y){
+            this.DeskClass.State = Manager.StateBase.MOVE_FORWARD;
+        }
     }
 
     updateDesk(){
         if(!this.IsInited) return;
+
+        if(this.deskScript.IsHit){
+            this.resetDesk();
+            this.stopDesk();
+            return;
+        }
 
         switch (this.DeskClass.State) {
             case Manager.StateBase.IDEL:
@@ -107,33 +124,19 @@ export class GrabLogic extends Common.EventDispather {
                 break;
         
             case Manager.StateBase.MOVE_FORWARD:
-                if(this.deskScript.IsHit){
-                    this.resetDesk();
-                }else if(this.DeskClass.Obj.transform.position.y <= DESK_END_POS.y){
-                    // this.DeskClass.Rigid3D.linearVelocity = SPEED_BACK_DESK;
-                    this.deskUp();
-                    this.DeskClass.State = Manager.StateBase.MOVE_BACK;
-                }else{
-                    this.deskDown();
-                }
-
+                this.deskDown();
                 break;
 
             case Manager.StateBase.MOVE_BACK:
-                if(this.DeskClass.Obj.transform.position.y >= DESK_POS.y){
-                    // this.DeskClass.Rigid3D.linearVelocity = SPEED_FORWARD_DESK;
-                    this.deskDown();
-                    this.DeskClass.State = Manager.StateBase.MOVE_FORWARD;
-                }else{
-                    this.deskUp();
-                }
-
+                this.deskUp();
                 break;
         }
     }
 
     moveHand(){
+        console.log(this.HandClass.State);
         if(!this.IsInited) return;
+        if(this.HandClass.State == Manager.StateBase.STOP) return;
 
         if(this.HandClass.State == Manager.StateBase.IDEL){
             // this.HandClass.Rigid3D.linearVelocity = SPEED_FORWARD_HAND;
@@ -152,6 +155,11 @@ export class GrabLogic extends Common.EventDispather {
     private handBack(){
         if(!this.IsInited) return;
         
+        if(this.HandClass.Obj.transform.position.x <= HAND_POS.x){
+            this.resetHand();
+            return;
+        }
+
         let vec = this.HandClass.Obj.transform.position;
         vec.x -= 0.3;
         this.HandClass.Obj.transform.position = vec;
@@ -161,10 +169,33 @@ export class GrabLogic extends Common.EventDispather {
         // this.HandClass.Rigid3D.linearVelocity = Laya.Vector3._ZERO;
         this.HandClass.Obj.transform.position = HAND_POS;
         this.HandClass.State = Manager.StateBase.IDEL;
+        this.enableHandGravity(false);
+    }
+
+    private stopHand(){
+        this.HandClass.State = Manager.StateBase.STOP;
+    }
+
+    private enableHandGravity(_open:boolean){
+        if(this.HandClass.Rigid3D.isKinematic == !_open) return;
+
+        this.HandClass.Rigid3D.isKinematic = !_open;
+        this.HandClass.Rigid3D.gravity = _open? new Laya.Vector3(0, -10, 0): Laya.Vector3._ZERO;
+        // this.HandClass.Rigid3D.overrideGravity = true;
+    }
+
+    private onHandHit(){
+        this.stopHand();
+        this.enableHandGravity(true);
     }
 
     updateHand(){
         if(!this.IsInited) return;
+
+        if(this.deskScript.IsHit){
+            this.onHandHit();
+            return;
+        }
 
         switch (this.HandClass.State) {
             case Manager.StateBase.IDEL:
@@ -172,9 +203,7 @@ export class GrabLogic extends Common.EventDispather {
                 break;
         
             case Manager.StateBase.MOVE_FORWARD:
-                if(this.deskScript.IsHit){
-                    this.resetHand();
-                }else if(this.HandClass.Obj.transform.position.x >= HAND_END_POS.x){
+                if(this.HandClass.Obj.transform.position.x >= HAND_END_POS.x){
                     // this.HandClass.Rigid3D.linearVelocity = SPEED_BACK_HAND;
                     this.HandClass.State = Manager.StateBase.MOVE_BACK;
                 }else{
@@ -184,32 +213,40 @@ export class GrabLogic extends Common.EventDispather {
                 break;
 
             case Manager.StateBase.MOVE_BACK:
-                if(this.HandClass.Obj.transform.position.x <= HAND_POS.x){
-                    this.resetHand();
-                }else{
-                    this.handBack();
+                this.handBack();
+                if(this.HandClass.Obj.transform.position.x < DESK_POS.x){
+                    this.HandClass.State = Manager.StateBase.BACK_PASSED;
                 }
 
+                break;
+            
+            case Manager.StateBase.BACK_PASSED:
+                this.handBack();
                 break;
         }
     }
 
     onUpdate(){
+        // console.log('每一帧时间：',Laya.timer.delta);
         this.updateDesk();
         this.updateHand();
-        // let handPos = this.Hand.transform.position;
-        // if(this.Vdir.x < 0){
-        //     if(handPos.x < DESK_POS.x){
-        //         this.HandState = Manager.StateBase.BACK_PASSED;
-        //     }
-        // }
     }
 }
 
 class RigidObject {
+    private _state = Manager.StateBase.IDEL;
     Obj:Laya.MeshSprite3D;
     Rigid3D:Laya.Rigidbody3D;
-    State = Manager.StateBase.IDEL;
+
+    set State(_st:string){
+        if(this._state !== _st){
+            this._state = _st;
+        }
+    }
+
+    get State(){
+        return this._state;
+    }
 
     constructor(obj:Laya.MeshSprite3D){
         this.Obj = obj;
