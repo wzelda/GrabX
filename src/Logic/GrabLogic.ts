@@ -18,6 +18,8 @@ const SPEED_BACK_DESK = new Laya.Vector3(0, 10, 0);
 const SPEED_FORWARD_HAND = new Laya.Vector3(50, 0, 0);
 const SPEED_BACK_HAND = new Laya.Vector3(-50, 0, 0);
 
+let knock_time = 0;
+
 export class GrabLogic extends Common.EventDispather {
     IsInited = false;
     Vdir = new Laya.Vector3();
@@ -30,6 +32,7 @@ export class GrabLogic extends Common.EventDispather {
     HandClass:RigidObject;
     deskScript:Logic.DeskCollisionScript;
     handScript:Logic.HandCollisionScript;
+    private timeLine:Laya.TimeLine = new Laya.TimeLine();
 
     onAwake(){
         this.GScene = Manager.SceneManager.CurScene as Laya.Scene3D;
@@ -43,10 +46,13 @@ export class GrabLogic extends Common.EventDispather {
         this.DeskClass = new RigidObject(this.Desk);
         this.HandClass = new RigidObject(this.Hand);
         this.addCollisionScript();
+        // Laya.stage.on(Laya.Event.CLICK, this, this.knockOnce);
         Laya.stage.on(Laya.Event.CLICK, this, this.moveHand);
         Laya.stage.on(Laya.Event.DOUBLE_CLICK, this, this.restart);
 
         this.IsInited = true;
+        this.resetVec();
+        this.createTimerLine();
         this.moveDesk();
     }
 
@@ -65,6 +71,48 @@ export class GrabLogic extends Common.EventDispather {
         this.handScript.kinematicSprite = this.Desk;
     }
 
+    private onComplete():void
+    {
+        knock_time++;
+        console.log("timeLine complete!!!!", knock_time);
+    }
+
+    private onLabel(label:String):void
+    {
+        console.log("LabelName:" + label);
+    }
+
+    private createTimerLine(){
+        this.timeLine.on(Laya.Event.COMPLETE,this,this.onComplete);
+        this.timeLine.on(Laya.Event.LABEL, this, this.onLabel);
+    }
+
+    private resetVec(){
+        this.Vdir.x = DESK_POS.x;
+        this.Vdir.y = DESK_POS.y;
+        this.Vdir.z = DESK_POS.z
+    }
+
+    private knockOnce(){
+        this.resetVec();
+        this.timeLine.reset();
+        this.addKnock();
+        this.addKnock(1);
+        this.timeLine.play(0,false);
+    }
+
+    private addStay(_stayTime?:number){
+        _stayTime = _stayTime? _stayTime * 1000: 0;
+        this.timeLine.addLabel("stay",0).to(this.Vdir, {y:DESK_POS.y}, _stayTime, null, 0)
+    }
+
+    private addKnock(_deltaTime?:number){
+        _deltaTime = _deltaTime? _deltaTime * 1000: 0;
+        this.timeLine
+            .to(this.Vdir,{y:DESK_END_POS.y},200,null,_deltaTime)
+            .to(this.Vdir,{y:DESK_POS.y},200,null,0)
+    }
+
     private restart(){
         this.deskScript.clearStatus();
         this.HandClass.State = Manager.StateBase.IDEL;
@@ -73,8 +121,13 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private moveDesk(){
-        this.deskDown();
+        // this.deskDown();
         this.DeskClass.State = Manager.StateBase.MOVE_FORWARD;
+        this.resetVec();
+        this.timeLine.reset();
+        this.addKnock();
+        this.addKnock(1);
+        this.timeLine.play(0,true);
     }
 
     private resetDesk(){
@@ -82,6 +135,7 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private stopDesk(){
+        this.timeLine.pause();
         this.DeskClass.State = Manager.StateBase.STOP;
     }
 
@@ -124,11 +178,12 @@ export class GrabLogic extends Common.EventDispather {
                 break;
         
             case Manager.StateBase.MOVE_FORWARD:
-                this.deskDown();
+                // this.deskDown();
+                this.DeskClass.Obj.transform.position = this.Vdir;
                 break;
 
             case Manager.StateBase.MOVE_BACK:
-                this.deskUp();
+                // this.deskUp();
                 break;
         }
     }
@@ -148,7 +203,7 @@ export class GrabLogic extends Common.EventDispather {
         if(!this.IsInited) return;
         
         let vec = this.HandClass.Obj.transform.position;
-        vec.x += 0.3;
+        vec.x += 0.5;
         this.HandClass.Obj.transform.position = vec;
     }
 
@@ -161,7 +216,7 @@ export class GrabLogic extends Common.EventDispather {
         }
 
         let vec = this.HandClass.Obj.transform.position;
-        vec.x -= 0.3;
+        vec.x -= 0.5;
         this.HandClass.Obj.transform.position = vec;
     }
 
