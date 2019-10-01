@@ -62,7 +62,7 @@ export class SpawnManager {
     //             callback();
     //         }
     //     }else{
-    //         fairygui.UIPackage.addPackage(_path, (err)=>{
+    //         fgui.UIPackage.addPackage(_path, (err)=>{
     //             if(err){
     //                 return false;
     //             }
@@ -77,7 +77,7 @@ export class SpawnManager {
     // }
 
     //从池中创建对象
-    static CreateObjectFromPool(_path:string, _slot:fairygui.GGraph) {
+    static CreateObjectFromPool(_path:string, _slot:fgui.GGraph) {
         if(!_path || !_slot) return;
 
         //从池中创建一个Skeleton对象
@@ -101,7 +101,7 @@ export class SpawnManager {
     //从创建Spine或DragonBone动画
     /**
      * @param  {string} _path 路径
-     * @param  {fairygui.GGraph} _slot 父对象 fairygui graph
+     * @param  {fgui.GGraph} _slot 父对象 fgui graph
      * @param  {string | number} _name 动画名字或者索引
      * @param  {boolean} _isLoop 是否循环播放，默认循环播放
      * @param  {boolean} _isPlay 是否立即播放，默认播放
@@ -138,7 +138,7 @@ export class SpawnManager {
     //通过预制体创建Spine
     /**
      * @param  {string} _path Prefab路径
-     * @param  {fairygui.GGraph} _slot 父对象 fairygui graph
+     * @param  {fgui.GGraph} _slot 父对象 fgui graph
      * @param  {function} callback 动画名字或者索引
      */
     // static CreateSpineFromPrefab(_path, _slot, callback) {
@@ -170,8 +170,8 @@ export class SpawnManager {
 
         Common.Resource.addUiPackage(pkg);
         
-        let grootInst = fairygui.GRoot.inst;
-        let ui = fairygui.UIPackage.createObject(pkg, com).asCom;
+        let grootInst = fgui.GRoot.inst;
+        let ui = fgui.UIPackage.createObject(pkg, com).asCom;
         if(ui){
             grootInst.addChild(ui);
             ui.visible = false;

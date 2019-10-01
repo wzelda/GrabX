@@ -15,8 +15,7 @@ const HAND_SIZE = new Laya.Vector3(6, 0.5, 0.5);
 //speed
 const SPEED_FORWARD_DESK = new Laya.Vector3(0, -10, 0);
 const SPEED_BACK_DESK = new Laya.Vector3(0, 10, 0);
-const SPEED_FORWARD_HAND = new Laya.Vector3(50, 0, 0);
-const SPEED_BACK_HAND = new Laya.Vector3(-50, 0, 0);
+const SPEED_HAND = 0.03;
 
 let knock_time = 0;
 
@@ -194,7 +193,6 @@ export class GrabLogic extends Common.EventDispather {
         if(this.HandClass.State == Manager.StateBase.STOP) return;
 
         if(this.HandClass.State == Manager.StateBase.IDEL){
-            // this.HandClass.Rigid3D.linearVelocity = SPEED_FORWARD_HAND;
             this.HandClass.State = Manager.StateBase.MOVE_FORWARD; 
         }
     }
@@ -203,8 +201,12 @@ export class GrabLogic extends Common.EventDispather {
         if(!this.IsInited) return;
         
         let vec = this.HandClass.Obj.transform.position;
-        vec.x += 0.5;
+        vec.x += SPEED_HAND * Laya.timer.delta;
         this.HandClass.Obj.transform.position = vec;
+
+        if(this.HandClass.Obj.transform.position.x >= HAND_END_POS.x){
+            this.HandClass.State = Manager.StateBase.MOVE_BACK;
+        }
     }
 
     private handBack(){
@@ -212,16 +214,22 @@ export class GrabLogic extends Common.EventDispather {
         
         if(this.HandClass.Obj.transform.position.x <= HAND_POS.x){
             this.resetHand();
+            //到达终点加分
+            Data.PlayerData.Point += 100;
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>得分：",Data.PlayerData.Point);
             return;
         }
 
+        if(this.HandClass.Obj.transform.position.x < DESK_POS.x){
+            this.HandClass.State = Manager.StateBase.BACK_PASSED;
+        }
+
         let vec = this.HandClass.Obj.transform.position;
-        vec.x -= 0.5;
+        vec.x -= SPEED_HAND * Laya.timer.delta;;
         this.HandClass.Obj.transform.position = vec;
     }
 
     private resetHand(){
-        // this.HandClass.Rigid3D.linearVelocity = Laya.Vector3._ZERO;
         this.HandClass.Obj.transform.position = HAND_POS;
         this.HandClass.State = Manager.StateBase.IDEL;
         this.enableHandGravity(false);
@@ -236,10 +244,10 @@ export class GrabLogic extends Common.EventDispather {
 
         this.HandClass.Rigid3D.isKinematic = !_open;
         this.HandClass.Rigid3D.gravity = _open? new Laya.Vector3(0, -10, 0): Laya.Vector3._ZERO;
-        // this.HandClass.Rigid3D.overrideGravity = true;
     }
 
     private onHandHit(){
+        Data.PlayerData.Point = 0;
         this.stopHand();
         this.enableHandGravity(true);
     }
@@ -258,20 +266,12 @@ export class GrabLogic extends Common.EventDispather {
                 break;
         
             case Manager.StateBase.MOVE_FORWARD:
-                if(this.HandClass.Obj.transform.position.x >= HAND_END_POS.x){
-                    // this.HandClass.Rigid3D.linearVelocity = SPEED_BACK_HAND;
-                    this.HandClass.State = Manager.StateBase.MOVE_BACK;
-                }else{
-                    this.handForward();
-                }
+                this.handForward();
 
                 break;
 
             case Manager.StateBase.MOVE_BACK:
                 this.handBack();
-                if(this.HandClass.Obj.transform.position.x < DESK_POS.x){
-                    this.HandClass.State = Manager.StateBase.BACK_PASSED;
-                }
 
                 break;
             

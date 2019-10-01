@@ -16,10 +16,10 @@ export let CtrlMapArray = new Array<typeof Controller>();
 export let ViewMapArray:Config.Dictionary<typeof View> = {};
 
 class CtrlLisener{
-    public Obj:fairygui.GObject;
+    public Obj:fgui.GObject;
     public Lisener:Function;
 
-    constructor(obj:fairygui.GObject, lisener:Function){
+    constructor(obj:fgui.GObject, lisener:Function){
         if(!obj) return;
 
         this.Obj = obj;
@@ -141,7 +141,7 @@ export class Controller extends UiCVBase{
         this.onOpen(this.Data);
     }
 
-    addButtonLisenter(object:fairygui.GObject, fun:Function, data?:Array<any>, thisArg?){
+    addButtonLisenter(object:fgui.GObject, fun:Function, data?:Array<any>, thisArg?){
         if(object == null || fun == null)
         {
             console.error("object or fun is null");
@@ -287,13 +287,13 @@ export class View extends UiCVBase {
     private PkgAdrs:string;
     private Pkg:string;
     private Com:string;
-    private _UI:fairygui.GComponent;
+    private _UI:fgui.GComponent;
     private CallbackList:Array<Function> = [];
     private uiCfg:Config.ViewConfig;
 
-    public Window:fairygui.GComponent; //弹出窗口，注意组件命名为Window
-    public Btn_Back:fairygui.GButton;   //关闭按钮，命名为Btn_Back
-    public List:fairygui.GList;  //列表，需自行定义
+    public Window:fgui.GComponent; //弹出窗口，注意组件命名为Window
+    public Btn_Back:fgui.GButton;   //关闭按钮，命名为Btn_Back
+    public List:fgui.GList;  //列表，需自行定义
 
     static set Key(key:string){this.vKey = key}
     static get Key(){return this.vKey}
@@ -328,7 +328,7 @@ export class View extends UiCVBase {
             if(!this._UI){
                 console.error('Invalid Ui com: ', this.uiCfg.Key);
             }else{
-                this.Window = this.UI.getChild('Window') as fairygui.GComponent;
+                this.Window = this.UI.getChild('Window') as fgui.GComponent;
                 this.LoadView();
             }
         }
@@ -360,7 +360,7 @@ export class View extends UiCVBase {
         this.CallbackList[callbackKey](...args);
     }
 
-    addButtonLisenter(object:fairygui.GObject, fun:Function, data?:Array<any>, thisArg?){
+    addButtonLisenter(object:fgui.GObject, fun:Function, data?:Array<any>, thisArg?){
         if(object == null || fun == null)
         {
             console.error("object or fun is null");
@@ -400,7 +400,7 @@ export class View extends UiCVBase {
 
         //     // this[i] = undefined
 
-        //     // if(this[i] instanceof fairygui.GComponent == true){
+        //     // if(this[i] instanceof fgui.GComponent == true){
         //     //     this[i].displayObject.offAll();
         //     // }
         // }

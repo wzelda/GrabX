@@ -115,6 +115,7 @@ type DamonInfoType = {
 export class PlayerData {
     static NikeName:string;
     static Avatar:string;
+    static Point = 0;
 
     static set Data(data){
         if(null != data.NickName){

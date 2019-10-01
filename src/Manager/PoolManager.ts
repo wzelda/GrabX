@@ -10,10 +10,10 @@ import * as Common from "../Common/Common";
 export class PoolManager extends Manager.BaseManager {
     static Inst:PoolManager;
 
-    //fairygui对象池
-    private static fguiPool = new fairygui.GObjectPool();
+    //fgui对象池
+    private static fguiPool = new fgui.GObjectPool();
 
-    //fairygui对象池
+    //fgui对象池
     static get FguiPool(){
         return this.fguiPool;
     }
@@ -40,7 +40,7 @@ export class PoolManager extends Manager.BaseManager {
         }else{
             switch (key) {
                 case Config.PoolType.FguiObj:
-                    if(item instanceof fairygui.GObject)
+                    if(item instanceof fgui.GObject)
                         this.FguiPool.returnObject(item);
             
                 default:
@@ -102,7 +102,7 @@ export class PoolManager extends Manager.BaseManager {
         this.getModelByType(Config.PoolType.BodyModel, path, callback, thisArg);
     }
 
-    static returnFguiObj(box:fairygui.GObject){
+    static returnFguiObj(box:fgui.GObject){
         this.recover(Config.PoolType.FguiObj, box);
     }
 }

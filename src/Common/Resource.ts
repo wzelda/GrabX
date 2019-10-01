@@ -28,7 +28,7 @@ export class Resource extends Laya.Script{
     static addUiPackage(pkgName:string){
         if(!this._addedUiPackages[pkgName]){
             console.log('加载UI包：', pkgName);
-            fairygui.UIPackage.addPackage('res/' + pkgName + '/' + pkgName);
+            fgui.UIPackage.addPackage('res/' + pkgName + '/' + pkgName);
             this._addedUiPackages[pkgName] = true;
         }
     }

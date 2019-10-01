@@ -21,13 +21,13 @@ export function ConvertTime(cd, ignoreHour?:boolean){
 
 //窗口弹出动画
 /**
- * @param  {fairygui.GComponent} windowUi
+ * @param  {fgui.GComponent} windowUi
  */
 export function PlayPopupEffect(windowUi, callback, thisArg){
-    if(windowUi instanceof fairygui.GObject) {
+    if(windowUi instanceof fgui.GObject) {
         windowUi.setPivot(0.5, 0.5);
 
-        fairygui.tween.GTween.to(0, 1, 0.5)
+        fgui.GTween.to(0, 1, 0.5)
             .setTarget(windowUi, windowUi.setScale)
             .onComplete(callback, thisArg);
     }
@@ -52,7 +52,7 @@ export function ColorHex2Dec(colorStr){
 }
 
 //判断是否为父组件（包括本体）
-export function isAncestorOf(parent:fairygui.GObject, child:fairygui.GObject):Boolean
+export function isAncestorOf(parent:fgui.GObject, child:fgui.GObject):Boolean
 {
     if (parent == null || child == null)
         return false;
@@ -61,7 +61,7 @@ export function isAncestorOf(parent:fairygui.GObject, child:fairygui.GObject):Bo
     if(parent == child)
         return true;
     
-    var p:fairygui.GComponent = child.parent;
+    var p:fgui.GComponent = child.parent;
     while(p)
     {
         if(p == parent)
@@ -73,7 +73,7 @@ export function isAncestorOf(parent:fairygui.GObject, child:fairygui.GObject):Bo
 }
 
 //判断坐标是否在组件矩形范围内
-export function isInRect(xv:number, yv:number, dest:fairygui.GObject){
+export function isInRect(xv:number, yv:number, dest:fgui.GObject){
     if(xv == null || yv == null || !dest) return;
 
     //转为屏幕坐标
@@ -87,13 +87,13 @@ export function isInRect(xv:number, yv:number, dest:fairygui.GObject){
 }
 
 export interface BtnInfoParts{
-    Progress_Health:fairygui.GProgressBar,
-    Progress_Exp:fairygui.GProgressBar,
-    Text_Level:fairygui.GTextField,
-    Text_TipsHealth:fairygui.GTextField,
+    Progress_Health:fgui.GProgressBar,
+    Progress_Exp:fgui.GProgressBar,
+    Text_Level:fgui.GTextField,
+    Text_TipsHealth:fgui.GTextField,
 }
 
-export function getBtnInfoParts(btn:fairygui.GComponent){
+export function getBtnInfoParts(btn:fgui.GComponent){
     return {
         Progress_Health:btn.getChild('Progress_Health').asProgress,
         Progress_Exp:btn.getChild('Progress_Exp').asProgress,
@@ -104,7 +104,7 @@ export function getBtnInfoParts(btn:fairygui.GComponent){
 
 //设置文本CacheMode为CHAR避免内存暴涨GC卡顿
 /**
- * @param  {fairygui.GTextField} textFiled
+ * @param  {fgui.GTextField} textFiled
  * @param  {boolean} useSysFont
  */
 // export function SetTxtCacheMode(textFiled, useSysFont){
@@ -160,7 +160,7 @@ export function StringFormat(str, ...args){
 
 //设置文本属性
 export function SetTxtProperty(txt, isBold, isUnderline){
-    if(txt instanceof fairygui.GTextField == false) return;
+    if(txt instanceof fgui.GTextField == false) return;
 
     if(typeof(isBold) == 'boolean'){
         txt._label._isBold = isBold;
@@ -208,9 +208,9 @@ export function SetNonnegative(num:number){
 //     }
 // }
 
-//设置fairygui控制器页签
-export function SetGControllerIdx(gctrl:fairygui.Controller, idx:number){
-    if(gctrl instanceof fairygui.Controller == false || typeof idx != 'number') return;
+//设置fgui控制器页签
+export function SetGControllerIdx(gctrl:fgui.Controller, idx:number){
+    if(gctrl instanceof fgui.Controller == false || typeof idx != 'number') return;
 
     if(idx < 0 || idx >= gctrl.pageCount) return;
 
@@ -310,7 +310,7 @@ export function isOnTencent(){
 
 //广告领取组件
 /**
- * @param  {fairygui.GComponent} adCom
+ * @param  {fgui.GComponent} adCom
  */
 export function AdGetRewardBtn(adCom){
     if(!adCom) return;
@@ -370,7 +370,7 @@ export function copyData(srcData, targetData){
 
 //设置广告组件样式
 /**
- * @param  {fairygui.GComponent} adCom
+ * @param  {fgui.GComponent} adCom
  * @param  {boolean} isSingle
  */
 // export function SetAdBtnStyle(adCom, isSingle){
@@ -400,7 +400,7 @@ export function copyData(srcData, targetData){
 // }
 
 //飘字
-let tipsUi:fairygui.GComponent;
+let tipsUi:fgui.GComponent;
 export function ShowTips(msg:string){
     if(!tipsUi){
         let viewName = Config.ViewKit.TipsLabel;
@@ -420,15 +420,15 @@ export function ShowTips(msg:string){
 
 //洞府加资源飘字
 interface AdobeAddTipsUi{
-    Ui:fairygui.GComponent;
-    Text_AddStone:fairygui.GTextField;
-    Text_AddFood:fairygui.GTextField;
-    Text_AddWood:fairygui.GTextField;
-    Text_AddIron:fairygui.GTextField;
+    Ui:fgui.GComponent;
+    Text_AddStone:fgui.GTextField;
+    Text_AddFood:fgui.GTextField;
+    Text_AddWood:fgui.GTextField;
+    Text_AddIron:fgui.GTextField;
 }
 let adobeAddTipsUi:AdobeAddTipsUi;
 
-function setAdobeResNum(txtCom:fairygui.GTextField, resNum:number){
+function setAdobeResNum(txtCom:fgui.GTextField, resNum:number){
     if(resNum >= 0){
         txtCom.color = '#00FF00';
         txtCom.text = '+' + resNum;
@@ -440,7 +440,7 @@ function setAdobeResNum(txtCom:fairygui.GTextField, resNum:number){
 
 //设置文字投影1像素
 let txtShadowFilter:Laya.GlowFilter;
-export function setTxtShadow(gtxt:fairygui.GObject){
+export function setTxtShadow(gtxt:fgui.GObject){
     if(!gtxt) return;
     if(!txtShadowFilter){
         txtShadowFilter = new Laya.GlowFilter('#000000', 1, 1, 1);
@@ -451,12 +451,12 @@ export function setTxtShadow(gtxt:fairygui.GObject){
 
 //设置UI节点与适配
 // export function setUiNode(){
-//     if(!fairygui.GRoot.inst) return;
+//     if(!fgui.GRoot.inst) return;
     
 //     let canvas = cc.find("Canvas");
-//     fairygui.GRoot.inst.node.parent = cc.find("Canvas");
-//     fairygui.GRoot.inst.node.x = -canvas.width * 0.5;
-//     fairygui.GRoot.inst.node.y = canvas.height * 0.5;
+//     fgui.GRoot.inst.node.parent = cc.find("Canvas");
+//     fgui.GRoot.inst.node.x = -canvas.width * 0.5;
+//     fgui.GRoot.inst.node.y = canvas.height * 0.5;
 // }
 
 //调用java
@@ -531,22 +531,22 @@ export function deepCopy(src:object, target:object){
 
 //填充物品按钮
 export class ItemBtnPartsClass {
-    Text_Title:fairygui.GTextField;
-    Text_AwardNum:fairygui.GTextField;
+    Text_Title:fgui.GTextField;
+    Text_AwardNum:fgui.GTextField;
 
-    constructor(btn:fairygui.GComponent){
+    constructor(btn:fgui.GComponent){
         this.Text_Title = btn.getChild('title').asTextField;
         this.Text_AwardNum = btn.getChild('Text_AwardNum').asTextField;
     }
 }
 
-export function fillItemData(itemdata, btn:fairygui.GComponent){
+export function fillItemData(itemdata, btn:fgui.GComponent){
     if(!itemdata || !btn) return;
 
     let parts = new ItemBtnPartsClass(btn);
 }
 
-export function fillItemListData(itemdataArr:any[], list:fairygui.GList){
+export function fillItemListData(itemdataArr:any[], list:fgui.GList){
     if(!itemdataArr || !list) return;
 
     itemdataArr.forEach(v=>{
@@ -555,13 +555,13 @@ export function fillItemListData(itemdataArr:any[], list:fairygui.GList){
 }
 
 //列表点击回调
-function onClickListItem(thisArg, func:Function, data, item:fairygui.GComponent){
+function onClickListItem(thisArg, func:Function, data, item:fgui.GComponent){
     let idx = item.parent.asList.getChildIndex(item);
     func.call(thisArg, idx + 1, ...data);
 }
 
-export function clickListCallback(list:fairygui.GList, thisArg, func:Function, ...data){
+export function clickListCallback(list:fgui.GList, thisArg, func:Function, ...data){
     if(!list || !func) return;
 
-    list.on(fairygui.Events.CLICK_ITEM, thisArg, onClickListItem, [thisArg, func, data]);
+    list.on(fgui.Events.CLICK_ITEM, thisArg, onClickListItem, [thisArg, func, data]);
 }

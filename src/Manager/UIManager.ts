@@ -7,7 +7,7 @@ import * as Manager from "./Manager";
 import * as Common from "../Common/Common";
 
 //强制引导
-let GuideList = new Array<fairygui.GComponent>();
+let GuideList = new Array<fgui.GComponent>();
 
 export class UIManager extends Manager.BaseManager {
     protected static _inst:UIManager;
@@ -70,7 +70,7 @@ export class UIManager extends Manager.BaseManager {
             //只允许创建一个实例
             console.log('Controller has opened: ', cKey);
             ctrlInst.show(..._data);
-            fairygui.GRoot.inst.setChildIndex(Core.ViewMap[cKey].UI, fairygui.GRoot.inst.numChildren);
+            fgui.GRoot.inst.setChildIndex(Core.ViewMap[cKey].UI, fgui.GRoot.inst.numChildren);
             return;
         }
 
@@ -155,9 +155,9 @@ export class UIManager extends Manager.BaseManager {
     // static openGuide = function(guideName, targetCom){
     //     if(!guideName) return;
 
-    //     let grootInst = fairygui.GRoot.inst
+    //     let grootInst = fgui.GRoot.inst
 
-    //     let guideCom = fairygui.UIPackage.createObject(Config.ViewKit.Guider.Pkg, guideName).asCom
+    //     let guideCom = fgui.UIPackage.createObject(Config.ViewKit.Guider.Pkg, guideName).asCom
     //     GuideList[guideName] = guideCom
 
     //     grootInst.addChild(guideCom)

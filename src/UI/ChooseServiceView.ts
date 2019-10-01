@@ -4,10 +4,10 @@ import * as Data from "../Data/Data";
 import * as Core from "./Core";
 
 export class ChooseServiceView extends Core.View{
-    Local:fairygui.GObject;
-    Http:fairygui.GObject;
-    LocalWechat:fairygui.GObject;
-    AccountName:fairygui.GTextInput;
+    Local:fgui.GObject;
+    Http:fgui.GObject;
+    LocalWechat:fgui.GObject;
+    AccountName:fgui.GTextInput;
 
     LoadView() {
         this.Local = this.UI.getChild("Local")

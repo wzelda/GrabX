@@ -6,7 +6,7 @@ import * as Config from "../Config/Config";
 import * as Common from "../Common/Common";
 
 export class LoadingView extends UI.View{
-    public Show_C:fairygui.Controller;
+    public Show_C:fgui.Controller;
 
     LoadView() {
         //渲染层级

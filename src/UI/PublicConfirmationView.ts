@@ -10,13 +10,13 @@ let vKey = Config.ViewKit.PublicConfirmation.Key;
 
 export class PublicConfirmationView extends Core.View{
     static vKey = vKey;
-    Btn_Close:fairygui.GButton;
-    Btn_Yes:fairygui.GButton;
-    Btn_Cancel:fairygui.GButton;
-    List_Content:fairygui.GList;
-    List_Reward:fairygui.GList;
-    Content_C:fairygui.Controller;
-    BtnType_C:fairygui.Controller;
+    Btn_Close:fgui.GButton;
+    Btn_Yes:fgui.GButton;
+    Btn_Cancel:fgui.GButton;
+    List_Content:fgui.GList;
+    List_Reward:fgui.GList;
+    Content_C:fgui.Controller;
+    BtnType_C:fgui.Controller;
 
     constructor(){
         super(vKey)

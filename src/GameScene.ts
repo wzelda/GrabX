@@ -48,8 +48,8 @@ export class GameScene  extends Common.EventDispather {
 	}
 
 	private initFairygui(){
-		fairygui.UIConfig.packageFileExtension = "txt";
-		Laya.stage.addChild(fairygui.GRoot.inst.displayObject);
+		fgui.UIConfig.packageFileExtension = "txt";
+		Laya.stage.addChild(fgui.GRoot.inst.displayObject);
 	}
 
 	private loadLoginUiRes(){

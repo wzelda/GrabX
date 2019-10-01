@@ -196,8 +196,8 @@ export function ClearLocalCache() {
 export function CanvasToTempFilePath(callback:Function){
     if(Utils.isMiniGame() == false) return;
 
-    // let width  = fairygui.GRoot.inst.width;
-    // let height  = fairygui.GRoot.inst.height;
+    // let width  = fgui.GRoot.inst.width;
+    // let height  = fgui.GRoot.inst.height;
     let sysInfo = platform.getSystemInfoSync();
     console.log(sysInfo);
 

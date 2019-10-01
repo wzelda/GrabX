@@ -6,7 +6,7 @@ import * as Core from "./Core";
 import * as UI from "./UI";
 
 export class LoadingProgressView extends Core.View{
-    public Login_C:fairygui.Controller;
+    public Login_C:fgui.Controller;
 
     LoadView() {
         //渲染层级

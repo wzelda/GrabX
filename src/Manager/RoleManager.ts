@@ -27,7 +27,7 @@ export class RoleManager{
         }
     }
 
-    static CreateRole(head:fairygui.GLoader, headUrl:string, bodySlot:fairygui.GObject, bodyPath:string, callback?:Function, thisArg?){
+    static CreateRole(head:fgui.GLoader, headUrl:string, bodySlot:fgui.GObject, bodyPath:string, callback?:Function, thisArg?){
         if(!bodyPath || !head) return;
 
         this.Player = new Manager.PlayerRole(head, bodySlot);

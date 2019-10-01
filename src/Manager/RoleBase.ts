@@ -2,13 +2,13 @@ import * as Manager from "./Manager";
 import * as Config from "../Config/Config";
 
 export class RoleBase{
-    Head:fairygui.GLoader;
-    BodySlot:fairygui.GObject;
+    Head:fgui.GLoader;
+    BodySlot:fgui.GObject;
     Body:Laya.Skeleton;
     // Ani:Laya.Animator;
     State:string = Manager.StateBase.IDEL;
 
-    constructor(head:fairygui.GLoader, bodySlot:fairygui.GObject, body?:Laya.Skeleton){
+    constructor(head:fgui.GLoader, bodySlot:fgui.GObject, body?:Laya.Skeleton){
         this.Head = head;
         this.BodySlot = bodySlot;
         this.Body = body;
@@ -27,7 +27,7 @@ export class PlayerRole extends RoleBase {
     mFactory:Laya.Templet;
     setBodyCallback:Function;
     
-    constructor(head:fairygui.GLoader, bodySlot:fairygui.GObject){
+    constructor(head:fgui.GLoader, bodySlot:fgui.GObject){
         super(head, bodySlot);
     }
 
