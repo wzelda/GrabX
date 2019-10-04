@@ -1,0 +1,11 @@
+{
+  "code": "import * as Core from \"./Core\";\r\nimport * as UI from \"./UI\";\r\nimport * as Config from \"../Config/Config\";\r\nlet cKey = Config.ViewKit.PublicConfirmation.Key;\r\nexport class PublicConfirmationController extends Core.Controller {\r\n    constructor() {\r\n        super(cKey, UI.PublicConfirmationView, false, true);\r\n    }\r\n    onOpen(data) {\r\n        this.addButtonLisenter(this.View.Btn_Close, this.close);\r\n        this.addButtonLisenter(this.View.Btn_Cancel, this.close);\r\n        this.addButtonLisenter(this.View.Btn_Yes, this.yesBtnOnClick);\r\n        if (data == null || data instanceof Config.PopupWindowData == false) {\r\n            console.error('Invalid popup window data.');\r\n            return;\r\n        }\r\n        else {\r\n            this.Callback = data.YesBtnCallback;\r\n            this.refreshUI(data);\r\n        }\r\n    }\r\n    yesBtnOnClick() {\r\n        if (this.Callback) {\r\n            this.Callback();\r\n        }\r\n        this.close();\r\n    }\r\n    onClose() {\r\n    }\r\n}\r\nPublicConfirmationController.cKey = cKey;\r\n",
+  "references": [
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/Manager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/LocalConfig.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/UIConfig.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/UI/Core.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/UI/UI.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts"
+  ]
+}

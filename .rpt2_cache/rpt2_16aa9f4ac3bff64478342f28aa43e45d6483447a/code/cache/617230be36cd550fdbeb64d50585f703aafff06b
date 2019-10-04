@@ -1,0 +1,12 @@
+{
+  "code": "import LocalConfig from \"../Config/LocalConfig\";\r\nimport * as Core from \"./Core\";\r\nimport * as Common from \"../Common/Common\";\r\nimport * as Config from \"../Config/Config\";\r\nexport class ChooseServiceController extends Core.Controller {\r\n    onCreate() {\r\n        this.SortingOrder(Config.UIConfig.SortingOrder.NetSignal);\r\n    }\r\n    onOpen(data) {\r\n        this.addButtonLisenter(this.View.Local, this.openLocalService);\r\n        this.View.AccountName.text = LocalConfig.GetAcountName();\r\n    }\r\n    openLocalService() {\r\n        let account = this.View.AccountName.text;\r\n        if (typeof (account) == 'string' && account.length > 0) {\r\n            Config.NetConfig.TempName = account;\r\n            LocalConfig.SaveAcountName(account);\r\n        }\r\n        Config.NetConfig.RequestUrl = Config.NetConfig.LocalRequestUrl;\r\n        this.close();\r\n    }\r\n    openHttpService() {\r\n        Config.NetConfig.RequestUrl = Config.NetConfig.HttpRequestUrl;\r\n        this.close();\r\n    }\r\n    openLocalWechatService() {\r\n        Config.NetConfig.RequestUrl = Config.NetConfig.LocalWechatRequestUrl;\r\n        console.log('请求地址：', Config.NetConfig.RequestUrl);\r\n        this.close();\r\n    }\r\n    onClose() {\r\n        LocalConfig.IsChoosedService = true;\r\n        this.dispatchEvent(Common.SceneLoginEid.ServiceChoosed);\r\n    }\r\n}\r\n",
+  "references": [
+    "E:/Practise/demo3DLaya/GrabX/src/Config/LocalConfig.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/Manager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Data/Data.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/UI/Core.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/UI/UI.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Common/Common.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts"
+  ]
+}

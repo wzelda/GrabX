@@ -1,0 +1,11 @@
+{
+  "code": "import * as UI from \"./UI\";\r\nimport * as Common from \"../Common/Common\";\r\nexport class LoadingController extends UI.Controller {\r\n    onOpen(data) {\r\n        this.View.Show_C.selectedIndex = 1;\r\n        this.addEventListener(Common.NetHttpConnectEid.ConnectBegin, this.openHttpStart);\r\n        this.addEventListener(Common.NetHttpConnectEid.ServiceRespond, this.onHttpRespond);\r\n    }\r\n    showLoading() {\r\n        this.View.Show_C.selectedIndex = 1;\r\n    }\r\n    hideLoading() {\r\n        this.View.Show_C.selectedIndex = 0;\r\n    }\r\n    onHttpRespond() {\r\n        this.hide();\r\n    }\r\n    openHttpStart() {\r\n        this.show();\r\n    }\r\n    onClose() {\r\n    }\r\n}\r\n",
+  "references": [
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/Manager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/LocalConfig.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/UI/UI.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Data/Data.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Common/Common.ts"
+  ]
+}

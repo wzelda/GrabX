@@ -1,0 +1,11 @@
+{
+  "code": "import { UIConfig } from \"../Config/UIConfig\";\r\nimport * as Core from \"./Core\";\r\nexport class LoadingProgressView extends Core.View {\r\n    LoadView() {\r\n        this.UI.sortingOrder = UIConfig.SortingOrder.SceneLoading;\r\n        this.Login_C = this.UI.getController('Login_C');\r\n    }\r\n    showWxLogin() {\r\n        this.Login_C.selectedIndex = 1;\r\n    }\r\n    onDestroy() {\r\n    }\r\n}\r\n",
+  "references": [
+    "E:/Practise/demo3DLaya/GrabX/src/Config/UIConfig.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/LocalConfig.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/Manager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/UI/Core.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/UI/UI.ts"
+  ]
+}

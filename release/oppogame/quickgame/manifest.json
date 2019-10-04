@@ -1,0 +1,13 @@
+{
+    "package": "com.brian.grabx",
+    "name": "GrabXtest",
+    "versionName": "0.1",
+    "versionCode": 1,
+    "minPlatformVersion": 1050,
+    "icon": "./ic_launcher-144.png",
+    "orientation": "portrait",
+    "type": "game",
+    "config": {
+        "logLevel": "off"
+    }
+}

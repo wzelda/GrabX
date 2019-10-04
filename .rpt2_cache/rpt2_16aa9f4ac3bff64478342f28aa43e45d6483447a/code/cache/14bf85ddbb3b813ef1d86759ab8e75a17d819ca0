@@ -1,0 +1,8 @@
+{
+  "code": "export * from './GrabLogic';\r\nexport * from './DeskCollisionScript';\r\nexport * from './HandCollisionScript';\r\n",
+  "references": [
+    "E:/Practise/demo3DLaya/GrabX/src/Logic/GrabLogic.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Logic/DeskCollisionScript.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Logic/HandCollisionScript.ts"
+  ]
+}

@@ -1,0 +1,80 @@
+{
+    "copyFilesFilter": [
+        "../bin/**/*.*"
+    ],
+    "openDataZone": false,
+    "compressJson": false,
+    "compressJsonFilter": [
+        "$basePath/**/*.{json,atlas}"
+    ],
+    "compressJsonNoteList": [
+        ""
+    ],
+    "compressImage": false,
+    "compressImageFilter": [
+        "$basePath/**/*.{png,jpg}"
+    ],
+    "compressImageNoteList": [
+        ""
+    ],
+    "compressJs": false,
+    "compressJsFilter": [
+        "$basePath/**/*.js"
+    ],
+    "compressJsNoteList": [
+        ""
+    ],
+    "version": false,
+    "versionFilter": [
+        "$basePath/**/*.*",
+        "!$basePath/*.html",
+        "!$basePath/{version.json,game.js,game.json,project.config.json,weapp-adapter.js,project.swan.json,swan-game-adapter.js,main.js,gameConfig.json}",
+        "!$basePath/layaforqq/**/*.*"
+    ],
+    "versionNoteList": [
+        "",
+        "",
+        "",
+        ""
+    ],
+    "packfile": false,
+    "packfileFilter": [
+        ""
+    ],
+    "packfileFullValue": [
+        "$basePath/**/*.*"
+    ],
+    "packfileTargetValue": "",
+    "packfileNoteList": [
+        ""
+    ],
+    "clearReleaseDir": true,
+    "compile": false,
+    "onlyIndexJS": false,
+    "projectType": "ts",
+    "pubTime": 1568177082290,
+    "oppoInfo": {
+        "name": "GrabXtest",
+        "projName": "quickgame",
+        "package": "com.brian.grabx",
+        "icon": "E:\\H5_Project\\app icon\\ic_launcher-144.png",
+        "versionName": "0.1",
+        "versionCode": 1,
+        "minPlatformVersion": 1050,
+        "orientation": "portrait",
+        "oppoDebug": false,
+        "useReleaseSign": false,
+        "subpack": false
+    },
+    "oppoSign": {
+        "generateSign": false,
+        "countryName": "",
+        "provinceName": "",
+        "localityName": "",
+        "orgName": "",
+        "orgUnitName": "",
+        "commonName": "",
+        "emailAddr": ""
+    },
+    "oppoSubpack": []
+}

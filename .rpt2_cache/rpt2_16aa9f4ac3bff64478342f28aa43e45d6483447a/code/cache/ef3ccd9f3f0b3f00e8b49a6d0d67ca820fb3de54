@@ -1,0 +1,6 @@
+{
+  "code": "import * as Common from \"../Common/Common\";\r\nexport class DeskCollisionScript extends Common.EventDispather {\r\n    constructor() {\r\n        super();\r\n        this._isHit = false;\r\n    }\r\n    get IsHit() {\r\n        return this._isHit;\r\n    }\r\n    clearStatus() {\r\n        this._isHit = false;\r\n    }\r\n    onTriggerEnter(other) {\r\n        if (other.owner === this.kinematicSprite) {\r\n            this._isHit = true;\r\n        }\r\n    }\r\n    onTriggerStay(other) {\r\n    }\r\n    onTriggerExit(other) {\r\n    }\r\n    onCollisionEnter(collision) {\r\n        if (collision.other.owner === this.kinematicSprite) {\r\n            this._isHit = true;\r\n        }\r\n    }\r\n    onCollisionStay(collision) {\r\n    }\r\n    onCollisionExit(collision) {\r\n    }\r\n}\r\n",
+  "references": [
+    "E:/Practise/demo3DLaya/GrabX/src/Common/Common.ts"
+  ]
+}

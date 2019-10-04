@@ -1,0 +1,14 @@
+{
+  "code": "import * as Manager from \"./Manager\";\r\nimport * as Data from \"../Data/Data\";\r\nimport { DevReqBody } from \"../Data/Data\";\r\nimport * as Common from \"../Common/Common\";\r\nexport class DataManager extends Manager.BaseManager {\r\n    constructor() {\r\n        super(...arguments);\r\n        this._isBaseBodyInited = false;\r\n        this._isBodyInited = false;\r\n    }\r\n    onAwake() {\r\n        this.initBaseBody();\r\n        this.addEventListener(Common.SceneLoginEid.LoginSuccess, this.onLoginSuccess);\r\n    }\r\n    initBaseBody() {\r\n        if (this._isBaseBodyInited)\r\n            return;\r\n        Data.ConfigData.ReqBody = new Data.HttpReqbodyBase(0, 10002);\r\n        Data.LoginData.ReqBody = new Data.HttpReqbodyBase(0, 10003);\r\n        this._isBaseBodyInited = true;\r\n    }\r\n    onLoginSuccess() {\r\n        this.initDevBodies();\r\n    }\r\n    initDevBodies() {\r\n        if (this._isBodyInited || !Data.LoginData.Session)\r\n            return;\r\n        Data.UpgradeData.ReqBody = new DevReqBody(8, 10802);\r\n        this._isBodyInited = true;\r\n    }\r\n}\r\n",
+  "references": [
+    "E:/Practise/demo3DLaya/GrabX/src/UI/Core.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/UI/UI.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Common/Utils.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/LocalConfig.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/Manager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Data/Data.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Data/Data.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Common/Common.ts"
+  ]
+}

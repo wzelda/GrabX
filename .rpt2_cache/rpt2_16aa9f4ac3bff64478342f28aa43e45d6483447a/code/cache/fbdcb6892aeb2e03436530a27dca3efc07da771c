@@ -1,0 +1,20 @@
+{
+  "code": "export * from './BaseManager';\r\nexport * from './ClickEffectManager';\r\nexport * from './LoadingIconManager';\r\nexport * from './LoadingProgressManager';\r\nexport * from './NetManager';\r\nexport * from './RoleBase';\r\nexport * from './StateBase';\r\nexport * from './SceneManager';\r\nexport * from './SpawnManager';\r\nexport * from './TimerManager';\r\nexport * from './UIManager';\r\nexport * from './VersionManager';\r\nexport * from './DataManager';\r\nexport * from './PoolManager';\r\nexport * from './RoleManager';\r\n",
+  "references": [
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/BaseManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/ClickEffectManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/LoadingIconManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/LoadingProgressManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/NetManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/RoleBase.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/StateBase.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/SceneManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/SpawnManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/TimerManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/UIManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/VersionManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/DataManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/PoolManager.ts",
+    "E:/Practise/demo3DLaya/GrabX/src/Manager/RoleManager.ts"
+  ]
+}
