@@ -1,4 +1,0 @@
-{
-  "code": "export class VersionManager {\r\n    constructor() { }\r\n    static set Version(version) {\r\n        this._version = version;\r\n    }\r\n    static get Version() {\r\n        return this._version;\r\n    }\r\n}\r\n",
-  "references": []
-}

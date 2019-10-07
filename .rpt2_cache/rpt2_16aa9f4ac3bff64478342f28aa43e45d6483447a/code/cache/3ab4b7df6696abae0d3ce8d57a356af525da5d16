@@ -1,6 +1,0 @@
-{
-  "code": "export * from './DataBase';\r\n",
-  "references": [
-    "E:/Practise/demo3DLaya/GrabX/src/Data/DataBase.ts"
-  ]
-}

@@ -1,7 +1,0 @@
-{
-  "code": "import * as Config from \"../Config/Config\";\r\nexport default class GEvent {\r\n    static AddListener(key, func, target) {\r\n        if (!key || typeof (func) != \"function\")\r\n            return;\r\n        if (!this.Listeners[key]) {\r\n            this.Listeners[key] = new Config.ListenerClass();\r\n        }\r\n        this.Listeners[key].addListener(func, target);\r\n    }\r\n    static RemoveListener(key, func) {\r\n        if (!key || typeof (func) != \"function\")\r\n            return;\r\n        let list = this.Listeners[key];\r\n        if (!list)\r\n            return;\r\n        list.removeListener(func);\r\n    }\r\n    static Dispatch(key, ...data) {\r\n        if (!key)\r\n            return;\r\n        let list = this.Listeners[key];\r\n        if (!list)\r\n            return;\r\n        for (let i in list.Listeners) {\r\n            if (typeof (list.Listeners[i]) != \"function\")\r\n                return;\r\n            list.Listeners[i].call(list.Targets[i], ...data);\r\n        }\r\n    }\r\n    static Clear(key) {\r\n        if (!key)\r\n            return;\r\n        delete this.Listeners[key];\r\n    }\r\n}\r\nGEvent.WX_REFRESH_FRIEND_DATA = 11001;\r\nGEvent.OPEN_RANK_UI = 11004;\r\nGEvent.CLOSE_RANK_UI = 11005;\r\nGEvent.Listeners = {};\r\n",
-  "references": [
-    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts",
-    "E:/Practise/demo3DLaya/GrabX/src/Common/Common.ts"
-  ]
-}

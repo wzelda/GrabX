@@ -1,8 +1,0 @@
-{
-  "code": "import * as Manager from \"./Manager\";\r\nimport * as Common from \"../Common/Common\";\r\nexport class BaseManager extends Common.EventDispather {\r\n    static get Inst() {\r\n        if (!Manager.SceneManager.CurScene) {\r\n            console.error('Please creae a scene first!');\r\n            return;\r\n        }\r\n        if (!this._inst) {\r\n            this._inst = Manager.SceneManager.CurScene.getComponent(this);\r\n            if (!this._inst) {\r\n                this._inst = Manager.SceneManager.CurScene.addComponent(this);\r\n            }\r\n        }\r\n        return this._inst;\r\n    }\r\n    constructor() {\r\n        super();\r\n    }\r\n    onDestroy() {\r\n        this.removeEventListener();\r\n    }\r\n}\r\n",
-  "references": [
-    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts",
-    "E:/Practise/demo3DLaya/GrabX/src/Manager/Manager.ts",
-    "E:/Practise/demo3DLaya/GrabX/src/Common/Common.ts"
-  ]
-}

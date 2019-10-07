@@ -12,7 +12,7 @@ let GuideList = new Array<fgui.GComponent>();
 export class UIManager extends Manager.BaseManager {
     protected static _inst:UIManager;
 
-    constructor(){
+    private constructor(){
         super();
     }
     

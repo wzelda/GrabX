@@ -1,9 +1,0 @@
-{
-  "code": "import * as UI from \"../UI/UI\";\r\nimport * as Manager from \"./Manager\";\r\nexport class LoadingIconManager extends Manager.BaseManager {\r\n    onAwake() {\r\n        this.Init();\r\n    }\r\n    Init() {\r\n        if (this.IsInited == true)\r\n            return;\r\n        this.IsInited = true;\r\n        this.Controller = Manager.UIManager.openController(UI.LoadingController);\r\n    }\r\n    ShowLoading() {\r\n        if (!this.IsInited)\r\n            return;\r\n        this.Controller.showLoading();\r\n    }\r\n    HideLoading() {\r\n        if (!this.IsInited)\r\n            return;\r\n        this.Controller.hideLoading();\r\n    }\r\n}\r\n",
-  "references": [
-    "E:/Practise/demo3DLaya/GrabX/src/UI/UI.ts",
-    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts",
-    "E:/Practise/demo3DLaya/GrabX/src/Manager/Manager.ts",
-    "E:/Practise/demo3DLaya/GrabX/src/Common/Common.ts"
-  ]
-}

@@ -7,7 +7,7 @@ export class SceneManager extends Manager.BaseManager{
     public static _inst:SceneManager;
     public static CurScene:Laya.Scene3D | Laya.Scene;
 
-    constructor(){
+    private constructor(){
         super();
     }
 

@@ -1,6 +1,0 @@
-{
-  "code": "export class Resource extends Laya.Script {\r\n    constructor() {\r\n        super();\r\n    }\r\n    static get inst() {\r\n        if (!this._instance) {\r\n            this._instance = new Resource();\r\n        }\r\n        return this._instance;\r\n    }\r\n    static load(url, thisArg, complete, progress, resType) {\r\n        Laya.loader.load(url, Laya.Handler.create(thisArg, complete), Laya.Handler.create(thisArg, progress), resType);\r\n    }\r\n    static addUiPackage(pkgName) {\r\n        if (!this._addedUiPackages[pkgName]) {\r\n            console.log('加载UI包：', pkgName);\r\n            fgui.UIPackage.addPackage('res/' + pkgName + '/' + pkgName);\r\n            this._addedUiPackages[pkgName] = true;\r\n        }\r\n    }\r\n    static getRes(path) {\r\n        return Laya.Loader.getRes(path);\r\n    }\r\n    static releaseRes() {\r\n        Laya.Resource.destroyUnusedResources();\r\n    }\r\n    onAwake() {\r\n        if (Resource._instance == null) {\r\n            Resource._instance = this;\r\n        }\r\n        else {\r\n            console.error(\"Resource instance must be only one\");\r\n        }\r\n    }\r\n}\r\nResource._instance = null;\r\nResource._addedUiPackages = {};\r\n",
-  "references": [
-    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts"
-  ]
-}

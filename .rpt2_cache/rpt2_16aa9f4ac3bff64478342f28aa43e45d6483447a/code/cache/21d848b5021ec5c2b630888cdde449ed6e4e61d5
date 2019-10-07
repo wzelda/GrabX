@@ -1,6 +1,0 @@
-{
-  "code": "export const LocalContent = {\r\n    Invite: '邀请',\r\n    NetError: '网络开小差',\r\n    Yes: '确定',\r\n    ComingSoon: '暂未开放',\r\n    GetAward: '领取',\r\n    FlyingTipsDefault: '恭喜获得奖励',\r\n    ConsAward: \"恭喜获得\",\r\n    ShareFailTips: \"分享相同朋友圈无法获得奖励\",\r\n};\r\n",
-  "references": [
-    "E:/Practise/demo3DLaya/GrabX/src/Config/Config.ts"
-  ]
-}

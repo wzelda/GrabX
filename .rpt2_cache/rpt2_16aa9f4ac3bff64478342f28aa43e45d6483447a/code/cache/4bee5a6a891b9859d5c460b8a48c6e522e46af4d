@@ -1,6 +1,0 @@
-{
-  "code": "export class StateBase {\r\n    constructor() {\r\n    }\r\n}\r\nStateBase.IDEL = 'IDEL';\r\nStateBase.DEAD = 'DEAD';\r\nStateBase.BACK_PASSED = 'BACK_PASSED';\r\nStateBase.MOVE_FORWARD = 'MOVE_FORWARD';\r\nStateBase.MOVE_BACK = 'MOVE_BACK';\r\nStateBase.STOP = 'STOP';\r\n",
-  "references": [
-    "E:/Practise/demo3DLaya/GrabX/src/Manager/Manager.ts"
-  ]
-}

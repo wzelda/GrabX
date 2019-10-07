@@ -17,7 +17,6 @@ const SPEED_FORWARD_DESK = new Laya.Vector3(0, -10, 0);
 const SPEED_BACK_DESK = new Laya.Vector3(0, 10, 0);
 const SPEED_HAND = 0.03;
 
-const V3_ZERO = new Laya.Vector3();
 let knock_time = 0;
 
 export class GrabLogic extends Common.EventDispather {
@@ -59,8 +58,7 @@ export class GrabLogic extends Common.EventDispather {
     addPhysics(target:Laya.Sprite3D, size:Laya.Vector3){
         var rigidBody:Laya.Rigidbody3D = target.addComponent(Laya.Rigidbody3D);//Rigidbody3D可与StaticCollider和RigidBody3D产生碰撞
         rigidBody.colliderShape = new Laya.BoxColliderShape(size.x, size.y, size.z);
-        // rigidBody.gravity = Laya.Vector3.normalize;
-        rigidBody.gravity = V3_ZERO.clone();
+        rigidBody.gravity = Laya.Vector3._ZERO;
         rigidBody.isTrigger = true;
         rigidBody.isKinematic = true;
     }
@@ -245,7 +243,7 @@ export class GrabLogic extends Common.EventDispather {
         if(this.HandClass.Rigid3D.isKinematic == !_open) return;
 
         this.HandClass.Rigid3D.isKinematic = !_open;
-        this.HandClass.Rigid3D.gravity = _open? new Laya.Vector3(0, -10, 0): V3_ZERO.clone();
+        this.HandClass.Rigid3D.gravity = _open? new Laya.Vector3(0, -10, 0): Laya.Vector3._ZERO;
     }
 
     private onHandHit(){
