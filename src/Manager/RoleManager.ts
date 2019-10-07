@@ -54,11 +54,11 @@ export class RoleManager{
     static setState(aniName:string, role:Manager.RoleBase){
         switch (aniName) {
             case this.ANIMATOR_IDLE:
-                role.State = Manager.StateBase.IDEL;
+                role.State.changeState(Config.StateConfig.IDEL);
                 break;
 
             case this.ANIMATOR_DEAD:
-                role.State = Manager.StateBase.DEAD;
+                role.State.changeState(Config.StateConfig.DEAD);
                 break;
         }
     }

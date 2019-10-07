@@ -6,7 +6,7 @@ export class RoleBase{
     BodySlot:fgui.GObject;
     Body:Laya.Skeleton;
     // Ani:Laya.Animator;
-    State:string = Manager.StateBase.IDEL;
+    State:Manager.StateBase;
 
     constructor(head:fgui.GLoader, bodySlot:fgui.GObject, body?:Laya.Skeleton){
         this.Head = head;

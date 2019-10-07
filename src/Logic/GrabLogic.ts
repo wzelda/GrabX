@@ -1,4 +1,5 @@
 import * as Utils from "../Common/Utils";
+import * as Core from "../Core/Core";
 import LocalConfig from '../Config/LocalConfig';
 import * as Config from "../Config/Config";
 import * as Manager from "../Manager/Manager";
@@ -27,8 +28,8 @@ export class GrabLogic extends Common.EventDispather {
     Hand:Laya.MeshSprite3D;
     HandState:string;
     Desk:Laya.MeshSprite3D;
-    DeskClass:RigidObject;
-    HandClass:RigidObject;
+    DeskClass:Core.RigidObject;
+    HandClass:Core.RigidObject;
     deskScript:Logic.DeskCollisionScript;
     handScript:Logic.HandCollisionScript;
     private timeLine:Laya.TimeLine = new Laya.TimeLine();
@@ -42,8 +43,8 @@ export class GrabLogic extends Common.EventDispather {
 
         this.addPhysics(this.Hand, HAND_SIZE);
         this.addPhysics(this.Desk, DESK_SIZE);
-        this.DeskClass = new RigidObject(this.Desk);
-        this.HandClass = new RigidObject(this.Hand);
+        this.DeskClass = new Core.RigidObject(this.Desk);
+        this.HandClass = new Core.RigidObject(this.Hand);
         this.addCollisionScript();
         // Laya.stage.on(Laya.Event.CLICK, this, this.knockOnce);
         Laya.stage.on(Laya.Event.CLICK, this, this.moveHand);
@@ -56,7 +57,7 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     addPhysics(target:Laya.Sprite3D, size:Laya.Vector3){
-        var rigidBody:Laya.Rigidbody3D = target.addComponent(Laya.Rigidbody3D);//Rigidbody3D可与StaticCollider和RigidBody3D产生碰撞
+        let rigidBody:Laya.Rigidbody3D = target.addComponent(Laya.Rigidbody3D);//Rigidbody3D可与StaticCollider和RigidBody3D产生碰撞
         rigidBody.colliderShape = new Laya.BoxColliderShape(size.x, size.y, size.z);
         rigidBody.gravity = Laya.Vector3._ZERO;
         rigidBody.isTrigger = true;
@@ -114,14 +115,14 @@ export class GrabLogic extends Common.EventDispather {
 
     private restart(){
         this.deskScript.clearStatus();
-        this.HandClass.State = Manager.StateBase.IDEL;
+        this.HandClass.State.changeState(Config.StateConfig.IDEL);
         this.moveDesk();
         this.resetHand();
     }
 
     private moveDesk(){
         // this.deskDown();
-        this.DeskClass.State = Manager.StateBase.MOVE_FORWARD;
+        this.DeskClass.State.changeState(Config.StateConfig.MOVE_FORWARD);
         this.resetVec();
         this.timeLine.reset();
         this.addKnock();
@@ -135,7 +136,7 @@ export class GrabLogic extends Common.EventDispather {
 
     private stopDesk(){
         this.timeLine.pause();
-        this.DeskClass.State = Manager.StateBase.STOP;
+        this.DeskClass.State.changeState(Config.StateConfig.STOP);
     }
 
     private deskDown(){
@@ -146,7 +147,7 @@ export class GrabLogic extends Common.EventDispather {
         this.DeskClass.Obj.transform.position = vec;
 
         if(vec.y <= DESK_END_POS.y){
-            this.DeskClass.State = Manager.StateBase.MOVE_BACK;
+            this.DeskClass.State.changeState(Config.StateConfig.MOVE_BACK);
         }
     }
 
@@ -158,7 +159,7 @@ export class GrabLogic extends Common.EventDispather {
         this.DeskClass.Obj.transform.position = vec;
 
         if(vec.y >= DESK_POS.y){
-            this.DeskClass.State = Manager.StateBase.MOVE_FORWARD;
+            this.DeskClass.State.changeState(Config.StateConfig.MOVE_FORWARD);
         }
     }
 
@@ -171,29 +172,29 @@ export class GrabLogic extends Common.EventDispather {
             return;
         }
 
-        switch (this.DeskClass.State) {
-            case Manager.StateBase.IDEL:
+        switch (this.DeskClass.State.curState) {
+            case Config.StateConfig.IDEL:
 
                 break;
         
-            case Manager.StateBase.MOVE_FORWARD:
+            case Config.StateConfig.MOVE_FORWARD:
                 // this.deskDown();
                 this.DeskClass.Obj.transform.position = this.Vdir;
                 break;
 
-            case Manager.StateBase.MOVE_BACK:
+            case Config.StateConfig.MOVE_BACK:
                 // this.deskUp();
                 break;
         }
     }
 
     moveHand(){
-        console.log(this.HandClass.State);
+        console.log(this.HandClass.State.curState);
         if(!this.IsInited) return;
-        if(this.HandClass.State == Manager.StateBase.STOP) return;
+        if(this.HandClass.State.curState == Config.StateConfig.STOP) return;
 
-        if(this.HandClass.State == Manager.StateBase.IDEL){
-            this.HandClass.State = Manager.StateBase.MOVE_FORWARD; 
+        if(this.HandClass.State.curState == Config.StateConfig.IDEL){
+            this.HandClass.State.changeState(Config.StateConfig.MOVE_FORWARD); 
         }
     }
 
@@ -205,7 +206,7 @@ export class GrabLogic extends Common.EventDispather {
         this.HandClass.Obj.transform.position = vec;
 
         if(this.HandClass.Obj.transform.position.x >= HAND_END_POS.x){
-            this.HandClass.State = Manager.StateBase.MOVE_BACK;
+            this.HandClass.State.changeState(Config.StateConfig.MOVE_BACK);
         }
     }
 
@@ -221,7 +222,7 @@ export class GrabLogic extends Common.EventDispather {
         }
 
         if(this.HandClass.Obj.transform.position.x < DESK_POS.x){
-            this.HandClass.State = Manager.StateBase.BACK_PASSED;
+            this.HandClass.State.changeState(Config.StateConfig.BACK_PASSED);
         }
 
         let vec = this.HandClass.Obj.transform.position;
@@ -231,12 +232,12 @@ export class GrabLogic extends Common.EventDispather {
 
     private resetHand(){
         this.HandClass.Obj.transform.position = HAND_POS;
-        this.HandClass.State = Manager.StateBase.IDEL;
+        this.HandClass.State.changeState(Config.StateConfig.IDEL);
         this.enableHandGravity(false);
     }
 
     private stopHand(){
-        this.HandClass.State = Manager.StateBase.STOP;
+        this.HandClass.State.changeState(Config.StateConfig.STOP);
     }
 
     private enableHandGravity(_open:boolean){
@@ -260,22 +261,22 @@ export class GrabLogic extends Common.EventDispather {
             return;
         }
 
-        switch (this.HandClass.State) {
-            case Manager.StateBase.IDEL:
+        switch (this.HandClass.State.curState) {
+            case Config.StateConfig.IDEL:
 
                 break;
         
-            case Manager.StateBase.MOVE_FORWARD:
+            case Config.StateConfig.MOVE_FORWARD:
                 this.handForward();
 
                 break;
 
-            case Manager.StateBase.MOVE_BACK:
+            case Config.StateConfig.MOVE_BACK:
                 this.handBack();
 
                 break;
             
-            case Manager.StateBase.BACK_PASSED:
+            case Config.StateConfig.BACK_PASSED:
                 this.handBack();
                 break;
         }
@@ -285,26 +286,5 @@ export class GrabLogic extends Common.EventDispather {
         // console.log('每一帧时间：',Laya.timer.delta);
         this.updateDesk();
         this.updateHand();
-    }
-}
-
-class RigidObject {
-    private _state = Manager.StateBase.IDEL;
-    Obj:Laya.MeshSprite3D;
-    Rigid3D:Laya.Rigidbody3D;
-
-    set State(_st:string){
-        if(this._state !== _st){
-            this._state = _st;
-        }
-    }
-
-    get State(){
-        return this._state;
-    }
-
-    constructor(obj:Laya.MeshSprite3D){
-        this.Obj = obj;
-        this.Rigid3D = obj.getComponent(Laya.Rigidbody3D);
     }
 }

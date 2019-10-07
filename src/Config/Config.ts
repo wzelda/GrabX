@@ -7,3 +7,4 @@ export * from './DataConfig';
 export * from './NetConfig';
 export * from './LocalContent';
 export * from './ConfigUtils';
+export * from './StateConfig';
