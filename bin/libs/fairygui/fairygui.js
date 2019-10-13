@@ -8150,6 +8150,21 @@ window.fgui = {};
             if (this.image.color != value) {
                 this.image.color = value;
                 this.updateGear(4);
+
+                var r = parseInt(value.substring(1, 3), 16) / 255;
+                var g = parseInt(value.substring(3, 5), 16) / 255;
+                var b = parseInt(value.substring(5, 7), 16) / 255;
+                r = this.cleanValue(isNaN(r)? 1: r, 1);
+                g = this.cleanValue(isNaN(g)? 1: g, 1);
+                b = this.cleanValue(isNaN(b)? 1: b, 1);
+                var cm = [
+                    r, 0, 0, 0, 0, //R
+                    0, g, 0, 0, 0, //G
+                    0, 0, b, 0, 0, //B
+                    0, 0, 0, 1, 0, //A
+                ];
+                var cf = new Laya.ColorFilter(cm);
+                this.image.filters=[cf];
             }
         }
         get flip() {
@@ -8190,6 +8205,9 @@ window.fgui = {};
         }
         set fillAmount(value) {
             this.image.fillAmount = value;
+        }
+        cleanValue(p_val, p_limit){
+            return Math.min(p_limit, Math.max(-p_limit, p_val));
         }
         createDisplayObject() {
             this._displayObject = this.image = new fgui.Image();

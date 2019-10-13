@@ -63,6 +63,8 @@ export const PoolType = {
     PassbyTxt: 'PassbyTxt',
     //fairygui对象
     FguiObj: 'FguiObj',
+    Hand: 'Hand',
+    Desk: 'Desk',
 }
 
 //池物品类型

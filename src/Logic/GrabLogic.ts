@@ -7,17 +7,6 @@ import * as Data from "../Data/Data";
 import * as Common from "../Common/Common";
 import * as Logic from "./Logic";
 
-const DESK_POS = new Laya.Vector3(2.5, 4, -5);
-const DESK_END_POS = new Laya.Vector3(2.5, -1, -5);
-const HAND_POS = new Laya.Vector3(-3, -2, -5);
-const HAND_END_POS = new Laya.Vector3(0, -2, -5);
-const DESK_SIZE = new Laya.Vector3(0.2, 3, 2);
-const HAND_SIZE = new Laya.Vector3(6, 0.5, 0.5);
-//speed
-const SPEED_FORWARD_DESK = new Laya.Vector3(0, -10, 0);
-const SPEED_BACK_DESK = new Laya.Vector3(0, 10, 0);
-const SPEED_HAND = 0.03;
-
 let knock_time = 0;
 
 export class GrabLogic extends Common.EventDispather {
@@ -25,9 +14,7 @@ export class GrabLogic extends Common.EventDispather {
     Vdir = new Laya.Vector3();
     DeskPosition = new Laya.Vector3();
     GScene:Laya.Scene3D;
-    Hand:Laya.MeshSprite3D;
     HandState:string;
-    Desk:Laya.MeshSprite3D;
     DeskClass:Core.RigidObject;
     HandClass:Core.RigidObject;
     deskScript:Logic.DeskCollisionScript;
@@ -36,15 +23,10 @@ export class GrabLogic extends Common.EventDispather {
 
     onAwake(){
         this.GScene = Manager.SceneManager.CurScene as Laya.Scene3D;
-        this.Hand = this.GScene.addChild(new Laya.MeshSprite3D(Laya.PrimitiveMesh.createBox(HAND_SIZE.x, HAND_SIZE.y, HAND_SIZE.z))) as Laya.MeshSprite3D;
-        this.Desk = this.GScene.addChild(new Laya.MeshSprite3D(Laya.PrimitiveMesh.createBox(DESK_SIZE.x, DESK_SIZE.y, DESK_SIZE.z))) as Laya.MeshSprite3D;
-        this.Hand.transform.position = HAND_POS
-        this.Desk.transform.position = DESK_POS
-
-        this.addPhysics(this.Hand, HAND_SIZE);
-        this.addPhysics(this.Desk, DESK_SIZE);
-        this.DeskClass = new Core.RigidObject(this.Desk);
-        this.HandClass = new Core.RigidObject(this.Hand);
+        this.DeskClass = new Core.RigidObject(Core.ObjectProxy.getObj(Config.PoolType.Desk));
+        this.DeskClass.setPosition(Config.ObjectConfig.DESK_POS);
+        this.HandClass = new Core.RigidObject(Core.ObjectProxy.getObj(Config.PoolType.Hand));
+        this.HandClass.setPosition(Config.ObjectConfig.HAND_POS);
         this.addCollisionScript();
         // Laya.stage.on(Laya.Event.CLICK, this, this.knockOnce);
         Laya.stage.on(Laya.Event.CLICK, this, this.moveHand);
@@ -56,19 +38,11 @@ export class GrabLogic extends Common.EventDispather {
         this.moveDesk();
     }
 
-    addPhysics(target:Laya.Sprite3D, size:Laya.Vector3){
-        let rigidBody:Laya.Rigidbody3D = target.addComponent(Laya.Rigidbody3D);//Rigidbody3D可与StaticCollider和RigidBody3D产生碰撞
-        rigidBody.colliderShape = new Laya.BoxColliderShape(size.x, size.y, size.z);
-        rigidBody.gravity = Laya.Vector3._ZERO;
-        rigidBody.isTrigger = true;
-        rigidBody.isKinematic = true;
-    }
-
     addCollisionScript(){
-        this.deskScript = this.Desk.addComponent(Logic.DeskCollisionScript) as Logic.DeskCollisionScript;
-        this.deskScript.kinematicSprite = this.Hand;
-        this.handScript = this.Hand.addComponent(Logic.HandCollisionScript) as Logic.HandCollisionScript;
-        this.handScript.kinematicSprite = this.Desk;
+        this.deskScript = Core.ObjectProxy.addScript(this.DeskClass, Logic.DeskCollisionScript) as Logic.DeskCollisionScript;
+        this.deskScript.kinematicSprite = this.HandClass.Obj;
+        this.handScript = Core.ObjectProxy.addScript(this.HandClass, Logic.HandCollisionScript) as Logic.HandCollisionScript;
+        this.handScript.kinematicSprite = this.DeskClass.Obj;
     }
 
     private onComplete():void
@@ -88,9 +62,9 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private resetVec(){
-        this.Vdir.x = DESK_POS.x;
-        this.Vdir.y = DESK_POS.y;
-        this.Vdir.z = DESK_POS.z
+        this.Vdir.x = Config.ObjectConfig.DESK_POS.x;
+        this.Vdir.y = Config.ObjectConfig.DESK_POS.y;
+        this.Vdir.z = Config.ObjectConfig.DESK_POS.z
     }
 
     private knockOnce(){
@@ -103,26 +77,30 @@ export class GrabLogic extends Common.EventDispather {
 
     private addStay(_stayTime?:number){
         _stayTime = _stayTime? _stayTime * 1000: 0;
-        this.timeLine.addLabel("stay",0).to(this.Vdir, {y:DESK_POS.y}, _stayTime, null, 0)
+        this.timeLine.addLabel("stay",0).to(this.Vdir, {y:Config.ObjectConfig.DESK_POS.y}, _stayTime, null, 0)
     }
 
     private addKnock(_deltaTime?:number){
         _deltaTime = _deltaTime? _deltaTime * 1000: 0;
         this.timeLine
-            .to(this.Vdir,{y:DESK_END_POS.y},200,null,_deltaTime)
-            .to(this.Vdir,{y:DESK_POS.y},200,null,0)
+            .to(this.Vdir,{y:Config.ObjectConfig.DESK_END_POS.y},200,null,_deltaTime)
+            .to(this.Vdir,{y:Config.ObjectConfig.DESK_POS.y},200,null,0)
     }
 
     private restart(){
         this.deskScript.clearStatus();
-        this.HandClass.State.changeState(Config.StateConfig.IDEL);
+        this.HandClass.changeState(Config.StateConfig.IDEL);
         this.moveDesk();
         this.resetHand();
     }
 
+    private newLevel(){
+        this.DeskClass.changeState(Config.StateConfig.DESK_LEAVE);
+    }
+
     private moveDesk(){
         // this.deskDown();
-        this.DeskClass.State.changeState(Config.StateConfig.MOVE_FORWARD);
+        this.DeskClass.changeState(Config.StateConfig.MOVE_FORWARD);
         this.resetVec();
         this.timeLine.reset();
         this.addKnock();
@@ -131,35 +109,65 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private resetDesk(){
-        this.DeskClass.Obj.transform.position = DESK_POS;
+        this.DeskClass.setPosition(Config.ObjectConfig.DESK_POS);
     }
 
     private stopDesk(){
         this.timeLine.pause();
-        this.DeskClass.State.changeState(Config.StateConfig.STOP);
+        this.DeskClass.changeState(Config.StateConfig.STOP);
     }
 
     private deskDown(){
         if(!this.IsInited) return;
         
-        let vec = this.DeskClass.Obj.transform.position;
+        let vec = this.DeskClass.Position;
         vec.y -= 0.3;
-        this.DeskClass.Obj.transform.position = vec;
+        this.DeskClass.setPosition(vec);
 
-        if(vec.y <= DESK_END_POS.y){
-            this.DeskClass.State.changeState(Config.StateConfig.MOVE_BACK);
+        if(vec.y <= Config.ObjectConfig.DESK_END_POS.y){
+            this.DeskClass.changeState(Config.StateConfig.MOVE_BACK);
         }
     }
 
     private deskUp(){
         if(!this.IsInited) return;
         
-        let vec = this.DeskClass.Obj.transform.position;
+        let vec = this.DeskClass.Position;
         vec.y += 0.3;
-        this.DeskClass.Obj.transform.position = vec;
+        this.DeskClass.setPosition(vec);
 
-        if(vec.y >= DESK_POS.y){
-            this.DeskClass.State.changeState(Config.StateConfig.MOVE_FORWARD);
+        if(vec.y >= Config.ObjectConfig.DESK_POS.y){
+            this.DeskClass.changeState(Config.StateConfig.MOVE_FORWARD);
+        }
+    }
+
+    private deskEnter(){
+        if(!this.IsInited) return;
+
+        let vec = this.DeskClass.Position;
+        vec.x -= 0.1;
+        this.DeskClass.setPosition(vec);
+
+        if(vec.x <= Config.ObjectConfig.DESK_POS.x){
+            this.moveDesk();
+        }
+    }
+
+    private onDeskDisappear(){
+        this.DeskClass.changeObj(Config.PoolType.Desk);
+        this.DeskClass.setPosition(Config.ObjectConfig.DESK_ENTER_POS);
+        this.DeskClass.changeState(Config.StateConfig.DESK_ENTER);
+    }
+
+    private deskLeave(){
+        if(!this.IsInited) return;
+
+        let vec = this.DeskClass.Position;
+        vec.x -= 0.1;
+        this.DeskClass.setPosition(vec);
+
+        if(vec.x <= -2){
+            this.onDeskDisappear();
         }
     }
 
@@ -179,11 +187,19 @@ export class GrabLogic extends Common.EventDispather {
         
             case Config.StateConfig.MOVE_FORWARD:
                 // this.deskDown();
-                this.DeskClass.Obj.transform.position = this.Vdir;
+                this.DeskClass.setPosition(this.Vdir);
                 break;
 
             case Config.StateConfig.MOVE_BACK:
                 // this.deskUp();
+                break;
+
+            case Config.StateConfig.DESK_LEAVE:
+                this.deskLeave();
+                break;
+
+            case Config.StateConfig.DESK_ENTER:
+                this.deskEnter();
                 break;
         }
     }
@@ -194,50 +210,57 @@ export class GrabLogic extends Common.EventDispather {
         if(this.HandClass.State.curState == Config.StateConfig.STOP) return;
 
         if(this.HandClass.State.curState == Config.StateConfig.IDEL){
-            this.HandClass.State.changeState(Config.StateConfig.MOVE_FORWARD); 
+            this.HandClass.changeState(Config.StateConfig.MOVE_FORWARD); 
         }
     }
 
     private handForward(){
         if(!this.IsInited) return;
         
-        let vec = this.HandClass.Obj.transform.position;
-        vec.x += SPEED_HAND * Laya.timer.delta;
-        this.HandClass.Obj.transform.position = vec;
+        let vec = this.HandClass.Position;
+        vec.x += Config.ObjectConfig.SPEED_HAND * Laya.timer.delta;
+        this.HandClass.setPosition(vec);
 
-        if(this.HandClass.Obj.transform.position.x >= HAND_END_POS.x){
-            this.HandClass.State.changeState(Config.StateConfig.MOVE_BACK);
+        if(this.HandClass.Position.x >= Config.ObjectConfig.HAND_END_POS.x){
+            this.HandClass.changeState(Config.StateConfig.MOVE_BACK);
+        }
+    }
+
+    private onReachFinish(){
+        this.resetHand();
+        //到达终点加分
+        Data.PlayerData.Point += 100;
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>得分：",Data.PlayerData.Point);
+        if(Data.PlayerData.Point >= 300){
+            this.newLevel();
         }
     }
 
     private handBack(){
         if(!this.IsInited) return;
         
-        if(this.HandClass.Obj.transform.position.x <= HAND_POS.x){
-            this.resetHand();
-            //到达终点加分
-            Data.PlayerData.Point += 100;
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>得分：",Data.PlayerData.Point);
+        if(this.HandClass.Position.x <= Config.ObjectConfig.HAND_POS.x){
+            this.onReachFinish();
             return;
         }
 
-        if(this.HandClass.Obj.transform.position.x < DESK_POS.x){
-            this.HandClass.State.changeState(Config.StateConfig.BACK_PASSED);
+        if(this.HandClass.Position.x < Config.ObjectConfig.DESK_POS.x){
+            this.HandClass.changeState(Config.StateConfig.BACK_PASSED);
         }
 
-        let vec = this.HandClass.Obj.transform.position;
-        vec.x -= SPEED_HAND * Laya.timer.delta;;
-        this.HandClass.Obj.transform.position = vec;
+        let vec = this.HandClass.Position;
+        vec.x -= Config.ObjectConfig.SPEED_HAND * Laya.timer.delta;;
+        this.HandClass.setPosition(vec);
     }
 
     private resetHand(){
-        this.HandClass.Obj.transform.position = HAND_POS;
-        this.HandClass.State.changeState(Config.StateConfig.IDEL);
+        this.HandClass.setPosition(Config.ObjectConfig.HAND_POS);
+        this.HandClass.changeState(Config.StateConfig.IDEL);
         this.enableHandGravity(false);
     }
 
     private stopHand(){
-        this.HandClass.State.changeState(Config.StateConfig.STOP);
+        this.HandClass.changeState(Config.StateConfig.STOP);
     }
 
     private enableHandGravity(_open:boolean){

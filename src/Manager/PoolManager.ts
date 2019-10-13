@@ -1,4 +1,4 @@
-import * as Core from "../UI/Core";
+import * as Core from "../Core/Core";
 import * as UI from "../UI/UI";
 import * as Utils from "../Common/Utils";
 import LocalConfig from '../Config/LocalConfig';
@@ -92,6 +92,10 @@ export class PoolManager extends Manager.BaseManager {
                 callback.call(thisArg, head);
             }
         }
+    }
+
+    static getObjByFunc(key:string, func:Function){
+        return Laya.Pool.getItemByCreateFun(key, func);
     }
 
     static getHead(path:string, callback:Function, thisArg?){

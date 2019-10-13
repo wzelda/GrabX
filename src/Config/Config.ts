@@ -8,3 +8,4 @@ export * from './NetConfig';
 export * from './LocalContent';
 export * from './ConfigUtils';
 export * from './StateConfig';
+export * from './ObjectConfig';

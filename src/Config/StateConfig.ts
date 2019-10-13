@@ -6,4 +6,6 @@ export const StateConfig = {
     MOVE_FORWARD: 'MOVE_FORWARD',    //前伸
     MOVE_BACK: 'MOVE_BACK',    //缩回
     STOP: 'STOP',    //停止运动
+    DESK_LEAVE: 'DESK_LEAVE',    //刀台离场
+    DESK_ENTER: 'DESK_ENTER',    //刀台进场
 }

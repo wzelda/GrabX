@@ -3,8 +3,8 @@ import * as Config from "../Config/Config";
 import * as Core from "../Core/Core";
 
 export class RigidObject{
-    State:Manager.StateBase;
     private _modelPath:string;
+    State:Manager.StateBase;
     Obj:Laya.MeshSprite3D;
     Rigid3D:Laya.Rigidbody3D;
 
@@ -17,10 +17,30 @@ export class RigidObject{
         }
     }
 
+    get Position(){
+        return this.Obj.transform.position;
+    }
+
     changeModel(path:string){
         if(!path || this._modelPath == path) return;
 
         Core.ObjectProxy.changeModel(this.Obj, this._modelPath, path);
         this._modelPath = path;
+    }
+
+    changeObj(key:string){
+        Manager.PoolManager.recover(key, this.Obj);
+        this.Obj = Core.ObjectProxy.getObj(key);
+    }
+
+    setPosition(pos:Laya.Vector3){
+        if(this.Obj)
+            this.Obj.transform.position = pos;
+    }
+
+    changeState(state:string){
+        if(!state) return;
+
+        this.State.changeState(state);
     }
 }
