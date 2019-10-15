@@ -23,9 +23,19 @@ export class GrabLogic extends Common.EventDispather {
 
     onAwake(){
         this.GScene = Manager.SceneManager.CurScene as Laya.Scene3D;
-        this.DeskClass = new Core.RigidObject(Core.ObjectProxy.getObj(Config.PoolType.Desk));
+        this.DeskClass = new Core.RigidObject(
+            Core.ObjectProxy.getObj(Config.PoolType.Desk),
+            new Core.ObjectState(Config.StateConfig.MOVE_FORWARD, this.deskDown.bind(this)),
+            new Core.ObjectState(Config.StateConfig.DESK_LEAVE, this.deskLeave.bind(this)),
+            new Core.ObjectState(Config.StateConfig.DESK_ENTER, this.deskEnter.bind(this)),
+        );
         this.DeskClass.setPosition(Config.ObjectConfig.DESK_POS);
-        this.HandClass = new Core.RigidObject(Core.ObjectProxy.getObj(Config.PoolType.Hand));
+        this.HandClass = new Core.RigidObject(
+            Core.ObjectProxy.getObj(Config.PoolType.Hand),
+            new Core.ObjectState(Config.StateConfig.MOVE_FORWARD, this.handForward.bind(this)),
+            new Core.ObjectState(Config.StateConfig.MOVE_BACK, this.handBack.bind(this)),
+            new Core.ObjectState(Config.StateConfig.BACK_PASSED, this.handBack.bind(this)),
+        );
         this.HandClass.setPosition(Config.ObjectConfig.HAND_POS);
         this.addCollisionScript();
         // Laya.stage.on(Laya.Event.CLICK, this, this.knockOnce);
@@ -39,14 +49,13 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     addCollisionScript(){
-        this.deskScript = Core.ObjectProxy.addScript(this.DeskClass, Logic.DeskCollisionScript) as Logic.DeskCollisionScript;
+        this.deskScript = this.DeskClass.addScript(Logic.DeskCollisionScript) as Logic.DeskCollisionScript;
         this.deskScript.kinematicSprite = this.HandClass.Obj;
-        this.handScript = Core.ObjectProxy.addScript(this.HandClass, Logic.HandCollisionScript) as Logic.HandCollisionScript;
+        this.handScript = this.HandClass.addScript(Logic.HandCollisionScript) as Logic.HandCollisionScript;
         this.handScript.kinematicSprite = this.DeskClass.Obj;
     }
 
-    private onComplete():void
-    {
+    private onTimelineComplete(){
         knock_time++;
         console.log("timeLine complete!!!!", knock_time);
     }
@@ -57,7 +66,7 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private createTimerLine(){
-        this.timeLine.on(Laya.Event.COMPLETE,this,this.onComplete);
+        this.timeLine.on(Laya.Event.COMPLETE,this,this.onTimelineComplete);
         this.timeLine.on(Laya.Event.LABEL, this, this.onLabel);
     }
 
@@ -118,20 +127,18 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private deskDown(){
-        if(!this.IsInited) return;
-        
-        let vec = this.DeskClass.Position;
-        vec.y -= 0.3;
-        this.DeskClass.setPosition(vec);
+        // let vec = this.DeskClass.Position;
+        // vec.y -= 0.3;
+        // this.DeskClass.setPosition(vec);
 
-        if(vec.y <= Config.ObjectConfig.DESK_END_POS.y){
-            this.DeskClass.changeState(Config.StateConfig.MOVE_BACK);
-        }
+        // if(vec.y <= Config.ObjectConfig.DESK_END_POS.y){
+        //     this.DeskClass.changeState(Config.StateConfig.MOVE_BACK);
+        // }
+
+        this.DeskClass.setPosition(this.Vdir);
     }
 
     private deskUp(){
-        if(!this.IsInited) return;
-        
         let vec = this.DeskClass.Position;
         vec.y += 0.3;
         this.DeskClass.setPosition(vec);
@@ -142,8 +149,6 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private deskEnter(){
-        if(!this.IsInited) return;
-
         let vec = this.DeskClass.Position;
         vec.x -= 0.1;
         this.DeskClass.setPosition(vec);
@@ -171,7 +176,7 @@ export class GrabLogic extends Common.EventDispather {
         }
     }
 
-    updateDesk(){
+    private updateDesk(){
         if(!this.IsInited) return;
 
         if(this.deskScript.IsHit){
@@ -180,36 +185,15 @@ export class GrabLogic extends Common.EventDispather {
             return;
         }
 
-        switch (this.DeskClass.State.curState) {
-            case Config.StateConfig.IDEL:
-
-                break;
-        
-            case Config.StateConfig.MOVE_FORWARD:
-                // this.deskDown();
-                this.DeskClass.setPosition(this.Vdir);
-                break;
-
-            case Config.StateConfig.MOVE_BACK:
-                // this.deskUp();
-                break;
-
-            case Config.StateConfig.DESK_LEAVE:
-                this.deskLeave();
-                break;
-
-            case Config.StateConfig.DESK_ENTER:
-                this.deskEnter();
-                break;
-        }
+        this.DeskClass.updateState();
     }
 
     moveHand(){
-        console.log(this.HandClass.State.curState);
+        console.log(this.HandClass.CurState);
         if(!this.IsInited) return;
-        if(this.HandClass.State.curState == Config.StateConfig.STOP) return;
+        if(this.HandClass.CurState == Config.StateConfig.STOP) return;
 
-        if(this.HandClass.State.curState == Config.StateConfig.IDEL){
+        if(this.HandClass.CurState == Config.StateConfig.IDEL){
             this.HandClass.changeState(Config.StateConfig.MOVE_FORWARD); 
         }
     }
@@ -284,25 +268,7 @@ export class GrabLogic extends Common.EventDispather {
             return;
         }
 
-        switch (this.HandClass.State.curState) {
-            case Config.StateConfig.IDEL:
-
-                break;
-        
-            case Config.StateConfig.MOVE_FORWARD:
-                this.handForward();
-
-                break;
-
-            case Config.StateConfig.MOVE_BACK:
-                this.handBack();
-
-                break;
-            
-            case Config.StateConfig.BACK_PASSED:
-                this.handBack();
-                break;
-        }
+        this.HandClass.updateState();
     }
 
     onUpdate(){

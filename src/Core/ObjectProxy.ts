@@ -42,6 +42,8 @@ export class ObjectProxy {
     }
 
     static addPhysics(target:Laya.Sprite3D, size:Laya.Vector3){
+        if(!target || !size) return;
+
         let rigidBody:Laya.Rigidbody3D = target.addComponent(Laya.Rigidbody3D);//Rigidbody3D可与StaticCollider和RigidBody3D产生碰撞
         rigidBody.colliderShape = new Laya.BoxColliderShape(size.x, size.y, size.z);
         rigidBody.gravity = Laya.Vector3._ZERO;
@@ -52,8 +54,7 @@ export class ObjectProxy {
     static addScript(rigidObj:Core.RigidObject, script){
         if(!rigidObj || !script) return;
         
-        rigidObj.Obj.addComponent(script);
-        return script;
+        return rigidObj.Obj.addComponent(script);
     }
 
     static changeModel(oldModel:Laya.Sprite3D, oldPath:string, newPath:string){
