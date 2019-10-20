@@ -1,3 +1,4 @@
 .laya/
 .laya/chrome
 /.laya/
+bin/js/bundle.js

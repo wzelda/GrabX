@@ -12,7 +12,6 @@ let knock_time = 0;
 export class GrabLogic extends Common.EventDispather {
     IsInited = false;
     Vdir = new Laya.Vector3();
-    DeskPosition = new Laya.Vector3();
     GScene:Laya.Scene3D;
     HandState:string;
     DeskClass:Core.RigidObject;
@@ -44,7 +43,7 @@ export class GrabLogic extends Common.EventDispather {
 
         this.IsInited = true;
         this.resetVec();
-        this.createTimerLine();
+        this.createTimeLine();
         this.moveDesk();
     }
 
@@ -65,7 +64,7 @@ export class GrabLogic extends Common.EventDispather {
         console.log("LabelName:" + label);
     }
 
-    private createTimerLine(){
+    private createTimeLine(){
         this.timeLine.on(Laya.Event.COMPLETE,this,this.onTimelineComplete);
         this.timeLine.on(Laya.Event.LABEL, this, this.onLabel);
     }
