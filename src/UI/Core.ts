@@ -9,11 +9,9 @@ import * as Common from "../Common/Common";
 let ViewMap:{[key:string]:View} = {};
 
 /** @type {Controller[]} */
-let OpenedCtrl = new Array<Controller>();
+let OpenedCtrl:Config.Dictionary<Controller> = {};
 
-// export let CtrlMapArray:Config.Dictionary<typeof Controller> = {};
-export let CtrlMapArray = new Array<typeof Controller>();
-export let ViewMapArray:Config.Dictionary<typeof View> = {};
+export let CtrlMapArray:Config.Dictionary<typeof Controller> = {};
 
 class CtrlLisener{
     public Obj:fgui.GObject;
@@ -40,8 +38,7 @@ export {OpenedCtrl, ViewMap}
 export abstract class UiCVBase extends Common.EventDispather{
     public multitonKey:string;
 
-    onDestroy()
-    {
+    onDestroy(){
         //重写此组件方法必须执行
         this.removeEventListener();
     }
@@ -51,7 +48,6 @@ export class Controller extends UiCVBase{
     static cKey:string;
     static view:typeof View;
 
-    // public multitonKey:string;
     public View:View;
 
     public Data;
@@ -90,20 +86,11 @@ export class Controller extends UiCVBase{
         this.IsPopup = isPopup == true;
     }
 
-    static setCtrl(id:number){
-        CtrlMapArray[id] = this;
-    }
-
     static init(cKey, view:typeof View, vKey?:string){
         this.Key = cKey;
         this.view = view;
         this.view.Key = vKey? vKey: cKey;
         CtrlMapArray[this.Key] = this;
-    }
-
-    createView(view: typeof View, key:string)
-    {
-        this.View = new view(key);
     }
 
     create() {
@@ -437,10 +424,8 @@ export class Facade{
     static PushCtrl(ctrl:Controller, data?){
         if(!ctrl) return;
 
-        OpenedCtrl.push(ctrl);
-        //显示栈底界面
-        // OpenedCtrl.forEach((v)=> {v.show()})
-        let nextc = OpenedCtrl.shift();
+        OpenedCtrl[ctrl.multitonKey] = ctrl;
+        let nextc = OpenedCtrl[Object.keys(OpenedCtrl)[0]];
         if(nextc){
             nextc.show(data);
         }

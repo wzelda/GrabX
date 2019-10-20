@@ -20,11 +20,6 @@ export class HttpManager extends Manager.BaseManager {
     public IsShowLoading:boolean = false;
     public IsConnecting:boolean = false;
 
-    onAwake(){
-        // Data.DevReqBody.InitBaseBody();
-        // this.addEventListener(Common.SceneLoginEid.LoginSuccess, this.initDevBodies);
-    }
-
     static set RequestUrl(url:string){
         Config.NetConfig.RequestUrl = url;
     }
@@ -133,14 +128,6 @@ export class HttpManager extends Manager.BaseManager {
         this.IsConnecting = false;
         Manager.LoadingIconManager.Inst.HideLoading();
 
-        // let popupData = {
-        //     Content: Config.LocalContent.NetError,
-        //     YesBtnContent:Config.LocalContent.Yes,
-        //     // BtnStyle: 1,
-        //     HasBg: false,
-        //     YesBtnCallback:this.Connect.bind(this, '', this.Data, this.Callback, this.IsShowLoading)
-        // }
-
         let content = [Config.LocalContent.NetError];
         let self = this;
         Manager.UIManager.openConfirmWindow(
@@ -167,12 +154,6 @@ export class HttpManager extends Manager.BaseManager {
         if(typeof(this.Callback) == 'function'){
             this.Callback(data);
         }
-
-        //发送响应数据，回传请求数据
-        // if(typeof(this.Data.ReqData) == 'string'){
-        //     this.Data.ReqData = JSON.parse(this.Data.ReqData);
-        // }
-        // Data.DataStruct.OnHttpRequestComplete(data, this._reqKey, this.Data.ReqData);
 
         //连接结束删除对象
         this._removeRequest();

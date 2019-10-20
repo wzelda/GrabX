@@ -117,8 +117,3 @@ export function filterConfigByParam(src:Array<any>, param:string, value, out?:Ar
 export function filterConfig(key:string, param:string, value, out?:Array<any>){
     return filterConfigByParam(getConfigByKey(key), param, value, out);
 }
-
-//获取道具配置
-export function getItemConfig(id:number){
-    return getConfigById(Config.LOCALCONFIG_KEY.ITEM, id) as Config.ItemConfigType;
-}

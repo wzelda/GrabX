@@ -22,10 +22,6 @@ export class BaseManager extends Common.EventDispather {
         return this._inst;
     }
 
-    constructor(){
-        super();
-    }
-
     onDestroy(){
         this.removeEventListener();
     }

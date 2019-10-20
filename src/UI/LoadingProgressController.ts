@@ -1,7 +1,6 @@
 import * as Manager from "../Manager/Manager";
 import LocalConfig from '../Config/LocalConfig';
 import * as Config from '../Config/Config';
-import {UIConfig} from "../Config/UIConfig";
 import * as Core from "./Core";
 import * as Data from "../Data/Data";
 import * as UI from "./UI";
@@ -40,7 +39,7 @@ export class LoadingProgressController extends Core.Controller{
         //小游戏加上分包进度
         if(Common.isMiniGame()) {
             // this.PkgNum += UIConfig.SubPkgs.length;
-            this.ResNum += UIConfig.SubPkgs.length;
+            this.ResNum += Config.UIConfig.SubPkgs.length;
         }
     }
 
