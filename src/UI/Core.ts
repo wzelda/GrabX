@@ -2,14 +2,11 @@ import * as Config from "../Config/Config";
 import * as Manager from "../Manager/Manager";
 import * as Common from "../Common/Common";
 
-/** @type {Object<string, Controller>} */
-// let CtrlMap:Config.Dictionary<Controller> = {};
-
 /** @type {Object<string, View>} */
-let ViewMap:{[key:string]:View} = {};
+export let ViewMap:{[key:string]:View} = {};
 
 /** @type {Controller[]} */
-let OpenedCtrl:Config.Dictionary<Controller> = {};
+export let OpenedCtrl:Config.Dictionary<Controller> = {};
 
 export let CtrlMapArray:Config.Dictionary<typeof Controller> = {};
 
@@ -28,8 +25,6 @@ class CtrlLisener{
         this.Obj.offClick(this, this.Lisener);
     }
 }
-
-export {OpenedCtrl, ViewMap}
 
 /// <summary>
 /// 向UiManager 注册脚本 还有一些 MSGID
@@ -69,7 +64,7 @@ export class Controller extends UiCVBase{
         if(!cKey || !view) {
             console.error("Invalid key or view");
             return;
-        };
+        }
 
         if(!OpenedCtrl[cKey]) {
             OpenedCtrl[cKey] = this;
@@ -89,7 +84,7 @@ export class Controller extends UiCVBase{
     static init(cKey, view:typeof View, vKey?:string){
         this.Key = cKey;
         this.view = view;
-        this.view.Key = vKey? vKey: cKey;
+        this.view.Key = vKey || cKey;
         CtrlMapArray[this.Key] = this;
     }
 
@@ -135,7 +130,7 @@ export class Controller extends UiCVBase{
             return;
         }
 
-        thisArg = thisArg?thisArg: this;
+        thisArg = thisArg || this;
         object.onClick(thisArg, fun, data);
         this.lisenterArray.push(new CtrlLisener(object, fun));
     }
@@ -156,8 +151,6 @@ export class Controller extends UiCVBase{
             this.dispatchEvent(Common.UiNoticeEid.CloseFullScreen, this.multitonKey);
         }
 
-        // delete CtrlMap[this.multitonKey];
-        // OpenedCtrl.splice(OpenedCtrl.indexOf(this), 1);
         OpenedCtrl[this.multitonKey] = null;
 
         //清空点击事件
@@ -190,7 +183,7 @@ export class Controller extends UiCVBase{
 
     // 显示界面
     show(data?) {
-        data = data? data: this.Data;
+        data = data || this.Data;
 
         if (this.IsDestroyed) {
             this.open(data);
@@ -268,7 +261,6 @@ export class View extends UiCVBase {
 
     private lisenterArray = new Array<CtrlLisener>();
     private _isAlive:boolean;
-    // public multitonKey:string;
     private FuiImageUrl:string;
     private FuiBufferUrl:string;
     private PkgAdrs:string;
@@ -319,18 +311,6 @@ export class View extends UiCVBase {
                 this.LoadView();
             }
         }
-    }
-
-    getInstance(key)
-    {
-        if (!key) return null;
-            
-        if(!ViewMap[key])
-        {
-            ViewMap[key] = new View(key);
-        }
-
-        return ViewMap[key];
     }
 
     /**

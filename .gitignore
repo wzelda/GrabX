@@ -1,4 +1,5 @@
 .laya/
+release/
 .laya/chrome
 /.laya/
-bin/js/bundle.js
+bin/js/

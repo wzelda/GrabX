@@ -37,12 +37,10 @@ export class GrabLogic extends Common.EventDispather {
         );
         this.HandClass.setPosition(Config.ObjectConfig.HAND_POS);
         this.addCollisionScript();
-        // Laya.stage.on(Laya.Event.CLICK, this, this.knockOnce);
         Laya.stage.on(Laya.Event.CLICK, this, this.moveHand);
         Laya.stage.on(Laya.Event.DOUBLE_CLICK, this, this.restart);
 
         this.IsInited = true;
-        this.resetVec();
         this.createTimeLine();
         this.moveDesk();
     }
@@ -75,12 +73,12 @@ export class GrabLogic extends Common.EventDispather {
         this.Vdir.z = Config.ObjectConfig.DESK_POS.z
     }
 
-    private knockOnce(){
+    private doKnock(loop:boolean = false){
         this.resetVec();
         this.timeLine.reset();
         this.addKnock();
         this.addKnock(1);
-        this.timeLine.play(0,false);
+        this.timeLine.play(0, loop);
     }
 
     private addStay(_stayTime?:number){
@@ -109,11 +107,7 @@ export class GrabLogic extends Common.EventDispather {
     private moveDesk(){
         // this.deskDown();
         this.DeskClass.changeState(Config.StateConfig.MOVE_FORWARD);
-        this.resetVec();
-        this.timeLine.reset();
-        this.addKnock();
-        this.addKnock(1);
-        this.timeLine.play(0,true);
+        this.doKnock(true);
     }
 
     private resetDesk(){
@@ -188,7 +182,6 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     moveHand(){
-        console.log(this.HandClass.CurState);
         if(!this.IsInited) return;
         if(this.HandClass.CurState == Config.StateConfig.STOP) return;
 
@@ -209,14 +202,22 @@ export class GrabLogic extends Common.EventDispather {
         }
     }
 
-    private onReachFinish(){
-        this.resetHand();
-        //到达终点加分
+    private addPoint(){
+        if(this.DeskClass.CurState == Config.StateConfig.DESK_LEAVE || this.DeskClass.CurState == Config.StateConfig.DESK_ENTER){
+            return;
+        }
+        
         Data.PlayerData.Point += 100;
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>得分：",Data.PlayerData.Point);
         if(Data.PlayerData.Point >= 300){
             this.newLevel();
         }
+    }
+
+    private onReachFinish(){
+        this.resetHand();
+        //到达终点加分
+        this.addPoint();
     }
 
     private handBack(){
