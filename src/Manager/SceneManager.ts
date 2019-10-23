@@ -21,7 +21,7 @@ export class SceneManager extends Manager.BaseManager{
     
     static create3dScene(){
 		//添加3D场景
-		let scene = Laya.stage.addChild(new Laya.Scene3D()) as Laya.Scene3D;
+		let scene = new Laya.Scene3D();
 
 		//添加照相机
 		let camera = (scene.addChild(new Laya.Camera(0, 0.1, 100))) as Laya.Camera;
