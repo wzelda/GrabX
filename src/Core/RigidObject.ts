@@ -4,7 +4,7 @@ import * as Core from "../Core/Core";
 
 export class RigidObject{
     private _modelPath:string;
-    StateList:Core.ObjectState[];
+    StateList:Config.Dictionary<Core.ObjectState> = {};
     State:Manager.StateBase;
     Obj:Laya.MeshSprite3D;
     Rigid3D:Laya.Rigidbody3D;
@@ -55,7 +55,9 @@ export class RigidObject{
     }
 
     initStateList(...states:Core.ObjectState[]){
-        this.StateList = states;
+        states.forEach(s=>{
+            this.StateList[s.State] = s;
+        }, this);
     }
 
     changeState(state:string){
@@ -65,13 +67,9 @@ export class RigidObject{
     }
 
     updateState(){
-        if(!Array.isArray(this.StateList)) return;
+        if(!this.StateList) return;
 
-        this.StateList.some(st=>{
-            if(st.State == this.CurState){
-                st.Update();
-                return true;
-            }
-        }, this);
+        let state = this.StateList[this.CurState];
+        state && state.Update();
     }
 }
