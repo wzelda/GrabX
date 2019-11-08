@@ -1,5 +1,5 @@
-.laya/
-release/
-.laya/chrome
 /.laya/
-bin/js/
+/release/
+/.laya/chrome
+/.laya/
+/bin/js/
