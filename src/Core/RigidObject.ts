@@ -20,7 +20,8 @@ export class RigidObject{
     }
 
     get Position(){
-        return this.Obj.transform.position;
+        if(this.Obj)
+            return this.Obj.transform.position;
     }
 
     get CurState(){
@@ -28,7 +29,8 @@ export class RigidObject{
     }
 
     getScript(script){
-        return this.Obj.getComponent(script);
+        if(this.Obj)
+            return this.Obj.getComponent(script);
     }
 
     addScript(script){
@@ -55,6 +57,8 @@ export class RigidObject{
     }
 
     initStateList(...states:Core.ObjectState[]){
+        if(!states) return;
+        
         states.forEach(s=>{
             this.StateList[s.State] = s;
         }, this);
