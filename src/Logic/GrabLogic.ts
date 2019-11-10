@@ -132,21 +132,17 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private deskUp(){
-        let vec = this.DeskClass.Position;
-        vec.y += 0.3;
-        this.DeskClass.setPosition(vec);
+        this.DeskClass.movePos(null, 0.3);
 
-        if(vec.y >= Config.ObjectConfig.DESK_POS.y){
+        if(this.DeskClass.Position.y >= Config.ObjectConfig.DESK_POS.y){
             this.DeskClass.changeState(Config.StateConfig.MOVE_FORWARD);
         }
     }
 
     private deskEnter(){
-        let vec = this.DeskClass.Position;
-        vec.x -= 0.1;
-        this.DeskClass.setPosition(vec);
+        this.DeskClass.movePos(-0.1);
 
-        if(vec.x <= Config.ObjectConfig.DESK_POS.x){
+        if(this.DeskClass.Position.x <= Config.ObjectConfig.DESK_POS.x){
             this.moveDesk();
         }
     }
@@ -160,11 +156,9 @@ export class GrabLogic extends Common.EventDispather {
     private deskLeave(){
         if(!this.IsInited) return;
 
-        let vec = this.DeskClass.Position;
-        vec.x -= 0.1;
-        this.DeskClass.setPosition(vec);
+        this.DeskClass.movePos(-0.1);
 
-        if(vec.x <= -2){
+        if(this.DeskClass.Position.x <= -2){
             this.onDeskDisappear();
         }
     }
@@ -183,7 +177,7 @@ export class GrabLogic extends Common.EventDispather {
 
     moveHand(){
         if(!this.IsInited) return;
-        if(this.HandClass.CurState == Config.StateConfig.STOP) return;
+        if(this.HandClass.IsStop) return;
 
         if(this.HandClass.CurState == Config.StateConfig.IDEL){
             this.HandClass.changeState(Config.StateConfig.MOVE_FORWARD); 
@@ -193,9 +187,7 @@ export class GrabLogic extends Common.EventDispather {
     private handForward(){
         if(!this.IsInited) return;
         
-        let vec = this.HandClass.Position;
-        vec.x += Config.ObjectConfig.SPEED_HAND * Laya.timer.delta;
-        this.HandClass.setPosition(vec);
+        this.HandClass.movePos(Config.ObjectConfig.SPEED_HAND * Manager.TimerManager.frameDelta);
 
         if(this.HandClass.Position.x >= Config.ObjectConfig.HAND_END_POS.x){
             this.HandClass.changeState(Config.StateConfig.MOVE_BACK);
@@ -232,9 +224,7 @@ export class GrabLogic extends Common.EventDispather {
             this.HandClass.changeState(Config.StateConfig.BACK_PASSED);
         }
 
-        let vec = this.HandClass.Position;
-        vec.x -= Config.ObjectConfig.SPEED_HAND * Laya.timer.delta;;
-        this.HandClass.setPosition(vec);
+        this.HandClass.movePos(-Config.ObjectConfig.SPEED_HAND * Manager.TimerManager.frameDelta);
     }
 
     private resetHand(){
@@ -272,7 +262,6 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     onUpdate(){
-        // console.log('每一帧时间：',Laya.timer.delta);
         this.updateDesk();
         this.updateHand();
     }

@@ -28,6 +28,10 @@ export class RigidObject{
         return this.State.curState;
     }
 
+    get IsStop(){
+        return this.CurState == Config.StateConfig.STOP;
+    }
+
     getScript(script){
         if(this.Obj)
             return this.Obj.getComponent(script);
@@ -54,6 +58,25 @@ export class RigidObject{
     setPosition(pos:Laya.Vector3){
         if(this.Obj)
             this.Obj.transform.position = pos;
+    }
+
+    movePos(x?:number, y?:number, z?:number){
+        if(!this.Obj) return;
+
+        let pos = this.Obj.transform.position;
+        if(x){
+            pos.x += x;
+        }
+
+        if(y){
+            pos.y += y;
+        }
+
+        if(z){
+            pos.z += z;
+        }
+
+        this.Obj.transform.position = pos;
     }
 
     initStateList(...states:Core.ObjectState[]){

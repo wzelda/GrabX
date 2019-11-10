@@ -174,4 +174,9 @@ export class TimerManager {
             delete timerList[i];
         }
     }
+
+    /**两帧之间的时间间隔,单位毫秒。*/
+    static get frameDelta(){
+        return Laya.timer.delta;
+    }
 }
