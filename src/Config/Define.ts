@@ -43,6 +43,14 @@ export interface EventDispatherInterface{
     removeEventListener();
 }
 
+export const VEC = {
+    ZERO: new Laya.Vector3(0, 0, 0),
+    UP: new Laya.Vector3(0, 1, 0),
+    DOWN: new Laya.Vector3(0, -1, 0),
+    LEFT: new Laya.Vector3(-1, 0, 0),
+    RIGHT: new Laya.Vector3(1, 0, 0)
+}
+
 //版本控制
 export enum VersionConfig {
     //开发版本

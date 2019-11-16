@@ -12,10 +12,6 @@ let GuideList = new Array<fgui.GComponent>();
 export class UIManager extends Manager.BaseManager {
     protected static _inst:UIManager;
 
-    private constructor(){
-        super();
-    }
-    
     public static get Inst(){
         if(!this._inst){
             this._inst = new UIManager();

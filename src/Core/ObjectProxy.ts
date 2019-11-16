@@ -46,7 +46,7 @@ export class ObjectProxy {
 
         let rigidBody:Laya.Rigidbody3D = target.addComponent(Laya.Rigidbody3D);//Rigidbody3D可与StaticCollider和RigidBody3D产生碰撞
         rigidBody.colliderShape = new Laya.BoxColliderShape(size.x, size.y, size.z);
-        rigidBody.gravity = Laya.Vector3._ZERO;
+        rigidBody.gravity = Config.VEC.ZERO;
         rigidBody.isTrigger = true;
         rigidBody.isKinematic = true;
     }

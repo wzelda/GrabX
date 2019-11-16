@@ -241,7 +241,7 @@ export class GrabLogic extends Common.EventDispather {
         if(this.HandClass.Rigid3D.isKinematic == !_open) return;
 
         this.HandClass.Rigid3D.isKinematic = !_open;
-        this.HandClass.Rigid3D.gravity = _open? new Laya.Vector3(0, -10, 0): Laya.Vector3._ZERO;
+        this.HandClass.Rigid3D.gravity = _open? new Laya.Vector3(0, -10, 0): Config.VEC.ZERO;
     }
 
     private onHandHit(){
