@@ -293,6 +293,11 @@ export function isMiniGame(){
     return Laya.Browser.onMiniGame;
 }
 
+// 是否OPPO
+export function isOppoGame(){
+    return Laya.Browser.onQGMiniGame;
+}
+
 //判断是否微信
 export function isOnWeixin(){
     return Laya.Browser.onWeiXin;
