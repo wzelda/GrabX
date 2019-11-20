@@ -1,7 +1,5 @@
 
 export const DeskConfig = {
-    Knock: 1,
-    Stay: 2,
     One: [
         {
             Type: 1,
@@ -31,5 +29,3 @@ export const DeskConfig = {
         }
     ],
 }
-
-export const DESK_KNOCK_DURATION = 100

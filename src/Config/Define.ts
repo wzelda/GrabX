@@ -153,3 +153,18 @@ export class PopupWindowData {
         this.RewardData = rewardData;
     }
 }
+
+export const POINT_PER_HIT = 100
+
+export const PASS_POINT = 2000
+
+export const COMBO_INTERVAL = 500
+
+export const COMBO_THREHOLD = 3
+
+export const COMBO_HIT_TOTAL = 5
+
+export const ActionType = {
+    Knock: 1,
+    Stay: 2,
+}
