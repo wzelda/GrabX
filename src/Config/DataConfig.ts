@@ -20,19 +20,13 @@ export const LOCALCONFIG_KEY = {
 
 export class DataConfig{
     public static IsConfigLoaded = false;   //是否已加载配置
-    protected static JSONHOT_URL  = 'res/config/JsonHot.json';
+    protected static JSONHOT_URL  = 'res/Config/JsonHot.json';
     //配置id，须与res/Config/JsonHot.Type相同
-    public static CULTIVATION_KEY = "Cultivation";
+    public static DESK_ACTION_KEY = "DeskAction";
+    public static ACTION_KEY_PREFIX = "Action_";
     public static JSON_CONFIGS = "json_configs";
 
     private static _instance : DataConfig;
-
-    public static getInstance() : DataConfig {
-        if(this._instance == undefined) {
-            this._instance = new DataConfig();
-        }
-        return this._instance;
-    }
 
     public static get instance() : DataConfig {
         if(this._instance == undefined) {
@@ -42,31 +36,14 @@ export class DataConfig{
         return this._instance;
     }
 
+    //--------------------------------------本地配置（测试用）------------------------------------------
+
     public static getConfigByName(key:string){
         return this.instance.getConfigByName(key);
     }
 
     public static getConfigById(key:string, id:number){
         return this.instance.getConfigById(key, id);
-    }
-
-    public static searchConfig(config:Array<any>, param:string, value){
-        let target = Common.searchArray(config, param, value);
-        if(!target){
-            console.error('找不到配置：', param, value);
-            return;
-        }else{
-            return target;
-        }
-    }
-
-    public static searchConfigById(config:Array<any>, id:number){
-        return this.searchConfig(config, 'Id', id);
-    }
-
-    public static getLocalConfigById(key:string, id:number){
-        let config:Array<any> = this.getLocalConfig(key);
-         return this.searchConfigById(config, id);
     }
 
     protected configData:{[key:string]:Array<any>} = {};
@@ -96,6 +73,56 @@ export class DataConfig{
                 });
             }
         }));
+    }
+
+    public getConfigByName(key:string) : any {
+        return this.configData[key];
+    }
+
+    public getConfigById(key:string,id:number) : any {
+        if(this.configData[key]) {
+            var configs = this.configData[key];
+            for(var i:number = 0; i < configs.length; i++) {
+                if(configs[i]['id'] == id) {
+                    return configs[i];
+                }
+            }
+        }
+        return null;
+    }
+
+    public getConfigsByType(key:string, type:number) : any {
+        if(this.configData[key]) {
+            var configs = this.configData[key];
+            var result:Array<any> = new Array();
+            for(var i:number = 0; i < configs.length; i++) {
+                if(configs[i]['type'] == type) {
+                    result.push(configs[i]);
+                }
+            }
+            return result;
+        }
+        return null;
+    }
+
+    //-----------------------------------------服务器配置------------------------------------------
+    public static searchConfig(config:Array<any>, param:string, value){
+        let target = Common.searchArray(config, param, value);
+        if(!target){
+            console.error('找不到配置：', param, value);
+            return;
+        }else{
+            return target;
+        }
+    }
+
+    public static searchConfigById(config:Array<any>, id:number){
+        return this.searchConfig(config, 'Id', id);
+    }
+
+    public static getLocalConfigById(key:string, id:number){
+        let config:Array<any> = this.getLocalConfig(key);
+         return this.searchConfigById(config, id);
     }
 
     //本地缓存
@@ -143,36 +170,6 @@ export class DataConfig{
     //获取本地所有配置
     static get localConfigs():Config.ConfigDataParam[]{
         return Common.getLocalJson(DataConfig.JSON_CONFIGS) || [];
-    }
-
-    public getConfigByName(key:string) : any {
-        return this.configData[key];
-    }
-
-    public getConfigById(key:string,id:number) : any {
-        if(this.configData[key]) {
-            var configs = this.configData[key];
-            for(var i:number = 0; i < configs.length; i++) {
-                if(configs[i]['id'] == id) {
-                    return configs[i];
-                }
-            }
-        }
-        return null;
-    }
-
-    public getConfigsByType(key:string, type:number) : any {
-        if(this.configData[key]) {
-            var configs = this.configData[key];
-            var result:Array<any> = new Array();
-            for(var i:number = 0; i < configs.length; i++) {
-                if(configs[i]['type'] == type) {
-                    result.push(configs[i]);
-                }
-            }
-            return result;
-        }
-        return null;
     }
 }
 

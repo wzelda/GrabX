@@ -1,0 +1,17 @@
+[ 
+    { 
+        "id": 1,
+        "Level": 1,
+        "Action": "1"
+    },
+    { 
+        "id": 2,
+        "Level": 2,
+        "Action": "2"
+    },
+    { 
+        "id": 3,
+        "Level": 3,
+        "Action": "1"
+    }
+]

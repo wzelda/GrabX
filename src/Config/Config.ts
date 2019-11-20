@@ -9,3 +9,4 @@ export * from './LocalContent';
 export * from './ConfigUtils';
 export * from './StateConfig';
 export * from './ObjectConfig';
+export * from './DeskConfig';

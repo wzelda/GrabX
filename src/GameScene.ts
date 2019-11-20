@@ -18,7 +18,9 @@ export class GameScene  extends Common.EventDispather {
 
 	public onAwake(){
 		GameScene._inst = this;
-		this.owner.addComponent(Logic.GrabLogic)
+		DataConfig.instance.initConfig(()=>{
+			this.owner.addComponent(Logic.GrabLogic);
+		});
 
 		// this.init();
 		// this.addEventListener(Common.SceneLoginEid.ConfigLoaded, this.onConfigLoaded);
@@ -127,8 +129,8 @@ export class GameScene  extends Common.EventDispather {
 		// Data.ConfigData.SendReq(Config.DataConfig.localConfigs);
 		Data.ConfigData.SendReq([]);
 
-		//拉取本地配置，目前由后端发送，暂弃用
-		// DataConfig.instance.initConfig(this.create2dScene.bind(this));
+		//拉取本地配置
+		// DataConfig.instance.initConfig();
 	}
 
 	private onConfigLoaded(){
