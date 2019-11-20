@@ -76,8 +76,19 @@ export class GrabLogic extends Common.EventDispather {
     private doKnock(loop:boolean = false){
         this.resetVec();
         this.timeLine.reset();
-        this.addKnock();
-        this.addKnock(1);
+
+        let deskConfig = Config.DataConfig.instance.getConfigById(Config.DataConfig.DESK_ACTION_KEY, 1);
+        let config = Config.DataConfig.instance.getConfigByName(deskConfig.Action);
+        config && config.forEach(cfg=>{
+            if(cfg.Type == Config.DeskConfig.Knock){
+                this.addKnock(cfg.Offset);
+            }else if(cfg.Type == Config.DeskConfig.Stay){
+                this.addStay(cfg.Offset);
+            }
+        }, this);
+
+        // this.addKnock();
+        // this.addKnock(1);
         this.timeLine.play(0, loop);
     }
 
@@ -89,8 +100,8 @@ export class GrabLogic extends Common.EventDispather {
     private addKnock(_deltaTime?:number){
         _deltaTime = _deltaTime? _deltaTime * 1000: 0;
         this.timeLine
-            .to(this.Vdir,{y:Config.ObjectConfig.DESK_END_POS.y},200,null,_deltaTime)
-            .to(this.Vdir,{y:Config.ObjectConfig.DESK_POS.y},200,null,0)
+            .to(this.Vdir, {y:Config.ObjectConfig.DESK_END_POS.y}, Config.DESK_KNOCK_DURATION, null, _deltaTime)
+            .to(this.Vdir, {y:Config.ObjectConfig.DESK_POS.y}, Config.DESK_KNOCK_DURATION, null, 0)
     }
 
     private restart(){
