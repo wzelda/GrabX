@@ -23,7 +23,6 @@ export class GrabLogic extends Common.EventDispather {
     private timeLine:Laya.TimeLine = new Laya.TimeLine();
     private IsInited = false;
     private IsCombo = false;
-    private IsDead = false;
 
     onAwake(){
         this.GScene = Manager.SceneManager.CurScene as Laya.Scene3D;
@@ -47,7 +46,6 @@ export class GrabLogic extends Common.EventDispather {
 
         this.IsInited = true;
         this.IsCombo = false;
-        this.IsDead = false;
         this.createTimeLine();
         this.moveDesk();
     }
@@ -62,6 +60,10 @@ export class GrabLogic extends Common.EventDispather {
     private get IsLoadingLevel():boolean{
         return this.DeskClass.CurState == Config.StateConfig.DESK_LEAVE 
         || this.DeskClass.CurState == Config.StateConfig.DESK_ENTER;
+    }
+
+    get IsDead():boolean{
+        return this.HandClass.CurState == Config.StateConfig.DEAD;
     }
 
     private onTimelineComplete(){
@@ -119,7 +121,6 @@ export class GrabLogic extends Common.EventDispather {
     private restart(){
         if(!this.IsDead || this.IsLoadingLevel) return;
 
-        this.IsDead = false;
         this.deskScript.clearStatus();
         this.HandClass.changeState(Config.StateConfig.IDEL);
         this.moveDesk();
@@ -231,8 +232,8 @@ export class GrabLogic extends Common.EventDispather {
     //-------------------------------------Hand---------------------------------------------
 
     doMoveHand(){
-        if(this.IsCombo){
-            console.log("连击状态不可移动");
+        if(this.IsCombo || this.IsLoadingLevel){
+            console.log("连击状态或场景切换不可移动");
             return;
         }
 
@@ -350,6 +351,10 @@ export class GrabLogic extends Common.EventDispather {
         this.HandClass.changeState(Config.StateConfig.STOP);
     }
 
+    private handDead(){
+        this.HandClass.changeState(Config.StateConfig.DEAD);
+    }
+
     private enableHandGravity(_open:boolean){
         if(this.HandClass.Rigid3D.isKinematic == !_open) return;
 
@@ -358,10 +363,9 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private onHandHit(){
-        this.IsDead = true;
         this.clearCombo();
         Data.PlayerData.Point = 0;
-        this.stopHand();
+        this.handDead();
         this.enableHandGravity(true);
     }
 
