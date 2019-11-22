@@ -156,7 +156,7 @@ export class PopupWindowData {
 
 export const POINT_PER_HIT = 100
 
-export const PASS_POINT = 2000
+export const PASS_POINT = 1000
 // 触发连击最小间隔：毫秒
 export const COMBO_INTERVAL = 2000
 

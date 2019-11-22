@@ -26,15 +26,10 @@ export class GrabLogic extends Common.EventDispather {
 
     onAwake(){
         this.GScene = Manager.SceneManager.CurScene as Laya.Scene3D;
-        this.DeskClass = new Core.RigidObject(
-            Core.ObjectProxy.getObj(Config.PoolType.Desk),
-            new Core.ObjectState(Config.StateConfig.MOVE_FORWARD, this.deskDown.bind(this)),
-            new Core.ObjectState(Config.StateConfig.DESK_LEAVE, this.deskLeave.bind(this)),
-            new Core.ObjectState(Config.StateConfig.DESK_ENTER, this.deskEnter.bind(this)),
-        );
+        this.newDesk();
         this.DeskClass.setPosition(Config.ObjectConfig.DESK_POS);
-        this.HandClass = new Core.RigidObject(
-            Core.ObjectProxy.getObj(Config.PoolType.Hand),
+        this.HandClass = Core.ObjectProxy.newRigidObject(
+            Config.PoolType.Hand,
             new Core.ObjectState(Config.StateConfig.MOVE_FORWARD, this.handForward.bind(this)),
             new Core.ObjectState(Config.StateConfig.MOVE_BACK, this.handBack.bind(this)),
             new Core.ObjectState(Config.StateConfig.BACK_PASSED, this.handBack.bind(this)),
@@ -48,6 +43,15 @@ export class GrabLogic extends Common.EventDispather {
         this.IsCombo = false;
         this.createTimeLine();
         this.moveDesk();
+    }
+
+    newDesk(){
+        this.DeskClass = Core.ObjectProxy.newRigidObject(
+            Config.PoolType.Desk,
+            new Core.ObjectState(Config.StateConfig.MOVE_FORWARD, this.deskDown.bind(this)),
+            new Core.ObjectState(Config.StateConfig.DESK_LEAVE, this.deskLeave.bind(this)),
+            new Core.ObjectState(Config.StateConfig.DESK_ENTER, this.deskEnter.bind(this)),
+        );
     }
 
     addCollisionScript(){
@@ -91,8 +95,8 @@ export class GrabLogic extends Common.EventDispather {
         this.resetVec();
         this.timeLine.reset();
 
-        let deskConfig = Config.DataConfig.instance.getConfigById(Config.DataConfig.DESK_ACTION_KEY, 1);
-        let config = Config.DataConfig.instance.getConfigByName(deskConfig.Action);
+        let deskConfig = Config.DataConfig.getConfigById(Config.DataConfig.DESK_ACTION_KEY, 1);
+        let config = Config.DataConfig.getConfigByName(deskConfig && deskConfig.Action);
         config && config.forEach(cfg=>{
             if(cfg.Type == Config.ActionType.Knock){
                 this.addKnock(cfg.Offset);
@@ -122,14 +126,16 @@ export class GrabLogic extends Common.EventDispather {
         if(!this.IsDead || this.IsLoadingLevel) return;
 
         this.deskScript.clearStatus();
-        this.HandClass.changeState(Config.StateConfig.IDEL);
         this.moveDesk();
         this.resetHand();
     }
 
     private newLevel(){
+        this.resetHand();
         this.DeskClass.changeState(Config.StateConfig.DESK_LEAVE);
         Data.PlayerData.Point = 0;
+
+        Laya.timer.once(1, this, this.onDeskDisappear);
     }
 
     private calcPoint(){
@@ -194,7 +200,7 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private deskEnter(){
-        this.DeskClass.movePos(-0.1);
+        this.DeskClass.movePos(Config.ObjectConfig.SPEED_DESK_CHANGE);
 
         if(this.DeskClass.Position.x <= Config.ObjectConfig.DESK_POS.x){
             this.moveDesk();
@@ -202,18 +208,18 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private onDeskDisappear(){
-        this.DeskClass.changeObj(Config.PoolType.Desk);
+        this.newDesk();
         this.DeskClass.setPosition(Config.ObjectConfig.DESK_ENTER_POS);
         this.DeskClass.changeState(Config.StateConfig.DESK_ENTER);
     }
 
-    private deskLeave(){
+    private deskLeave(obj:Core.RigidObject){
         if(!this.IsInited) return;
 
-        this.DeskClass.movePos(-0.1);
+        obj.movePos(Config.ObjectConfig.SPEED_DESK_CHANGE);
 
-        if(this.DeskClass.Position.x <= -2){
-            this.onDeskDisappear();
+        if(obj.Position.x <= Config.ObjectConfig.DESK_LEAVE_POS.x){
+            Core.ObjectProxy.disposeObj(obj);
         }
     }
 
@@ -225,8 +231,6 @@ export class GrabLogic extends Common.EventDispather {
             this.stopDesk();
             return;
         }
-
-        this.DeskClass.updateState();
     }
 
     //-------------------------------------Hand---------------------------------------------
@@ -317,7 +321,7 @@ export class GrabLogic extends Common.EventDispather {
         if(this.checkCombo()){
             this.HandClass.changeState(Config.StateConfig.MOVE_FORWARD); 
         }else{
-            this.resetHand();
+            this.handIdel();
         }
     }
 
@@ -337,6 +341,12 @@ export class GrabLogic extends Common.EventDispather {
     }
 
     private resetHand(){
+        last_reach_time = 0;
+        this.clearCombo();
+        this.handIdel();
+    }
+
+    private handIdel(){
         this.HandClass.setPosition(Config.ObjectConfig.HAND_POS);
         this.HandClass.changeState(Config.StateConfig.IDEL);
         this.enableHandGravity(false);
@@ -371,12 +381,11 @@ export class GrabLogic extends Common.EventDispather {
             this.onHandHit();
             return;
         }
-
-        this.HandClass.updateState();
     }
 
     onUpdate(){
         this.updateDesk();
         this.updateHand();
+        Core.ObjectProxy.updateObjState();
     }
 }

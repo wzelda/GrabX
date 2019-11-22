@@ -5,6 +5,8 @@ import * as Common from "../Common/Common";
 import { ObjectConfig } from "../Config/Config";
 
 export class ObjectProxy {
+    static ObjList:Core.RigidObject[] = [];
+
     static createHand(){
         let hand = Manager.SceneManager.CurScene.addChild(
             new Laya.MeshSprite3D(Laya.PrimitiveMesh.createBox(
@@ -39,6 +41,24 @@ export class ObjectProxy {
             case Config.PoolType.Desk:
                 return Manager.PoolManager.getObjByFunc(Config.PoolType.Desk, this.createDesk.bind(this));
         }
+    }
+
+    static newRigidObject(key:string, ...state){
+        let obj = new Core.RigidObject(key, this.getObj(key), ...state);
+        obj.Obj.active = true;
+        this.ObjList.push(obj);
+        return obj;
+    }
+
+    static disposeObj(obj:Core.RigidObject){
+        obj.dispose();
+        this.ObjList.splice(this.ObjList.indexOf(obj), 1);
+    }
+
+    static updateObjState(){
+        this.ObjList.forEach(o=>{
+            o.updateState();
+        });
     }
 
     static addPhysics(target:Laya.Sprite3D, size:Laya.Vector3){

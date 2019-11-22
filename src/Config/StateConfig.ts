@@ -1,5 +1,6 @@
 
 export const StateConfig = {
+    NONE: "",
     IDEL: 'IDEL',  //待机
     DEAD: 'DEAD',
     BACK_PASSED: 'BACK_PASSED',    //已缩回安全区

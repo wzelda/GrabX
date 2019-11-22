@@ -15,9 +15,9 @@ export class ObjectState{
         this.OnExit = onExit;
     }
 
-    Update(){
+    Update(...data){
         if(this.OnUpdate){
-            this.OnUpdate();
+            this.OnUpdate(...data);
         }
     }
 }

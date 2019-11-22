@@ -49,13 +49,13 @@ export class DataConfig{
     protected configData:{[key:string]:Array<any>} = {};
 
     protected loadConfig(url:string, key:string, cb?:Function) : void {
-        Laya.loader.load(url, Laya.Handler.create(this, config=>{
+        Common.Resource.load(url, this, config=>{
             config = JSON.stringify(config);
             var configJson = JSON.parse(config);
             this.configData[key] = configJson;
 
             cb && cb();
-        }));
+        });
     }
 
     public initConfig(cb?:Function) : void {
@@ -75,11 +75,11 @@ export class DataConfig{
         }));
     }
 
-    public getConfigByName(key:string) : any {
+    public getConfigByName(key:string) {
         return this.configData[key];
     }
 
-    public getConfigById(key:string,id:number) : any {
+    public getConfigById(key:string, id:number) {
         if(this.configData[key]) {
             var configs = this.configData[key];
             for(var i:number = 0; i < configs.length; i++) {
@@ -91,7 +91,7 @@ export class DataConfig{
         return null;
     }
 
-    public getConfigsByType(key:string, type:number) : any {
+    public getConfigsByType(key:string, type:number) {
         if(this.configData[key]) {
             var configs = this.configData[key];
             var result:Array<any> = new Array();

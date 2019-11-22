@@ -4,18 +4,41 @@ import * as Core from "../Core/Core";
 
 export class RigidObject{
     private _modelPath:string;
+    private _obj:Laya.MeshSprite3D;
+    private _objKey:string;
     StateList:Config.Dictionary<Core.ObjectState> = {};
     State:Manager.StateBase;
-    Obj:Laya.MeshSprite3D;
     Rigid3D:Laya.Rigidbody3D;
 
-    constructor(obj:Laya.MeshSprite3D, ...states:Core.ObjectState[]){
+    constructor(key:string, obj:Laya.MeshSprite3D, ...states:Core.ObjectState[]){
+        if(!obj){
+            console.error("param obj is null!");
+            return;
+        }
+        
+        this._objKey = key;
         this.Obj = obj;
         this.State = new Manager.StateBase();
         this.initStateList(...states);
         this.Rigid3D = obj.getComponent(Laya.Rigidbody3D);
         if(!this.Rigid3D){
             console.error("Rigid Object miss rigidbody3d!");
+        }
+    }
+
+    get Obj(){
+        if(this._obj){
+            return this._obj;
+        }else{
+            console.error("obj is null!");
+        }
+    }
+
+    set Obj(obj){
+        if(!obj){
+            console.error("try to set a null obj!");
+        }else{
+            this._obj = obj;
         }
     }
 
@@ -50,9 +73,21 @@ export class RigidObject{
         this._modelPath = path;
     }
 
+    dispose(){
+        this.returnObjToPool();
+        this.changeState(Config.StateConfig.NONE);
+        this.StateList = {};
+    }
+
+    returnObjToPool(){
+        this.Obj.active = false;
+        Manager.PoolManager.recover(this._objKey, this.Obj);
+    }
+
     changeObj(key:string){
-        Manager.PoolManager.recover(key, this.Obj);
+        this.returnObjToPool();
         this.Obj = Core.ObjectProxy.getObj(key);
+        this.Obj.active = true;
     }
 
     setPosition(pos:Laya.Vector3){
@@ -97,6 +132,6 @@ export class RigidObject{
         if(!this.StateList) return;
 
         let state = this.StateList[this.CurState];
-        state && state.Update();
+        state && state.Update(this);
     }
 }
