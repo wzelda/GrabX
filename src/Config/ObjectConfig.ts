@@ -11,6 +11,7 @@ export const ObjectConfig = {
     //speed
     SPEED_FORWARD_DESK: new Laya.Vector3(0, -10, 0),
     SPEED_BACK_DESK: new Laya.Vector3(0, 10, 0),
-    SPEED_HAND: 0.06,
-    DESK_KNOCK_DURATION: 1000,
+    SPEED_HAND: 0.01,
+    // 断头台下落时间：毫秒
+    DESK_KNOCK_DURATION: 10000,
 }

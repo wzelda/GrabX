@@ -280,7 +280,7 @@ export class GrabLogic extends Common.EventDispather {
 
     private checkCombo():boolean{
         let t = Date.now();
-        if(last_reach_time === 0){
+        if(!last_reach_time){
             // 第一次不算
             last_reach_time = t;
             return false;
@@ -288,8 +288,8 @@ export class GrabLogic extends Common.EventDispather {
 
         console.log(t - last_reach_time, combo_logger, this.IsCombo);
         //连击计数
-        if(!this.IsCombo && t - last_reach_time <= Config.COMBO_INTERVAL){
-            if(combo_logger < Config.COMBO_HIT_TOTAL){
+        if(!this.IsCombo){
+            if(t - last_reach_time <= Config.COMBO_INTERVAL){
                 combo_hits++;
                 console.log("连击！", combo_hits);
                 
@@ -297,19 +297,14 @@ export class GrabLogic extends Common.EventDispather {
                     this.startCombo();
                 }
             }
+
+            last_reach_time = t;
         }else{
             combo_hits = 0;
-        }
-
-        if(this.IsCombo){
             combo_logger++;
-            if(combo_logger > Config.COMBO_HIT_TOTAL){
+            if(combo_logger >= Config.COMBO_HIT_TOTAL){
                 this.onComboEnd();
             }
-        }
-
-        if(!this.IsCombo){
-            last_reach_time = t;
         }
 
         return this.IsCombo;
