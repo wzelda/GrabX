@@ -61,6 +61,12 @@ export class ObjectProxy {
         });
     }
 
+    static distroyAllObj(){
+        this.ObjList.forEach(o=>{
+            o.dispose();
+        });
+    }
+
     static addPhysics(target:Laya.Sprite3D, size:Laya.Vector3){
         if(!target || !size) return;
 

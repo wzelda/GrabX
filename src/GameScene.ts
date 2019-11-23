@@ -7,6 +7,7 @@ import * as UI from "./UI/UI";
 import * as Data from './Data/Data';
 import * as Common from "./Common/Common";
 import * as Logic from "./Logic/Logic";
+import * as Core from "./Core/Core";
 
 export class GameScene  extends Common.EventDispather {
 	protected static _inst:GameScene;
@@ -27,6 +28,11 @@ export class GameScene  extends Common.EventDispather {
 		// this.addEventListener(Common.SceneLoginEid.ServiceChoosed, this.onVersionChecked);
 		// this.addEventListener(Common.SceneLoginEid.LoginSuccess, this.onLogined);
 		// this.addEventListener(Common.SceneLoginEid.SimProgressEnd, this.openMainUi);
+	}
+
+	onDestroy(){
+		Core.ObjectProxy.distroyAllObj();
+		this.removeEventListener();
 	}
 
     public init(){

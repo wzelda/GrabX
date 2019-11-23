@@ -52,6 +52,7 @@ export class GrabLogic extends Common.EventDispather {
             new Core.ObjectState(Config.StateConfig.DESK_LEAVE, this.deskLeave.bind(this)),
             new Core.ObjectState(Config.StateConfig.DESK_ENTER, this.deskEnter.bind(this)),
         );
+
     }
 
     addCollisionScript(){
