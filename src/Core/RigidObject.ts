@@ -129,7 +129,7 @@ export class RigidObject{
     }
 
     updateState(){
-        if(!this.StateList) return;
+        if(!this.StateList || !this.Obj || !this.Obj.active) return;
 
         let state = this.StateList[this.CurState];
         state && state.Update(this);
