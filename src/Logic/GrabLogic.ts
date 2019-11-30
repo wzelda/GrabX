@@ -7,6 +7,12 @@ import * as Data from "../Data/Data";
 import * as Common from "../Common/Common";
 import * as Logic from "./Logic";
 
+let theConfig = {
+    AllLevel:[],
+    Level: null,
+    Action: [],
+    Prize: null,
+}
 let knock_time = 0;
 let last_reach_time = 0;
 let combo_logger = 0;
@@ -21,6 +27,7 @@ export class GrabLogic extends Common.EventDispather {
     deskScript:Logic.DeskCollisionScript;
     handScript:Logic.HandCollisionScript;
     private timeLine:Laya.TimeLine = new Laya.TimeLine();
+    private CurrLevel = 1;
     private IsInited = false;
     private IsCombo = false;
 
@@ -42,7 +49,19 @@ export class GrabLogic extends Common.EventDispather {
         this.IsInited = true;
         this.IsCombo = false;
         this.createTimeLine();
+        this.loadConfig();
         this.moveDesk();
+    }
+
+    loadConfig(){
+        if(!theConfig.AllLevel || theConfig.AllLevel.length == 0){
+            theConfig.AllLevel = Config.DataConfig.getConfigByName(Config.DataConfig.LEVEL_KEY);
+        }
+        theConfig.Level = Config.DataConfig.getConfigById(Config.DataConfig.LEVEL_KEY, this.CurrLevel);
+        if(theConfig.Level){
+            theConfig.Action = Config.DataConfig.getConfigByName(theConfig.Level.Action);
+            theConfig.Prize = Config.DataConfig.getConfigById(Config.DataConfig.PRIZE_KEY, theConfig.Level.Prize);
+        }
     }
 
     newDesk(){
@@ -95,9 +114,7 @@ export class GrabLogic extends Common.EventDispather {
         this.resetVec();
         this.timeLine.reset();
 
-        let deskConfig = Config.DataConfig.getConfigById(Config.DataConfig.DESK_ACTION_KEY, 1);
-        let config = Config.DataConfig.getConfigByName(deskConfig && deskConfig.Action);
-        config && config.forEach(cfg=>{
+        theConfig.Action && theConfig.Action.forEach(cfg=>{
             if(cfg.Type == Config.ActionType.Knock){
                 this.addKnock(cfg.Offset);
             }else if(cfg.Type == Config.ActionType.Stay){
@@ -134,12 +151,24 @@ export class GrabLogic extends Common.EventDispather {
         this.resetHand();
         this.DeskClass.changeState(Config.StateConfig.DESK_LEAVE);
         Data.PlayerData.Point = 0;
+        if(this.CurrLevel < theConfig.AllLevel.length){
+            this.CurrLevel++;
+        }else{
+            console.log("已通过全部关卡！重新开始！");
+            this.CurrLevel = 1;
+        }
+        this.loadConfig();
 
         Laya.timer.once(1, this, this.onDeskDisappear);
     }
 
+    private playPassEffect(){
+        console.log("恭喜通过第",this.CurrLevel,"关，获得奖励：", theConfig.Prize.Name, theConfig.Prize.Desc);
+    }
+
     private calcPoint(){
-        if(Data.PlayerData.Point >= Config.PASS_POINT){
+        if(theConfig.Level && theConfig.Level.Point && Data.PlayerData.Point >= theConfig.Level.Point){
+            this.playPassEffect();
             this.newLevel();
         }
     }

@@ -1,21 +1,22 @@
 [ 
     { 
-        "id": 1001,
-        "Type": "DeskAction",
-        "Url": "res/Config/DeskAction.json",
-        "FloatTest": 2.600,
-        "BoolTest": true
+        "id": 1,
+        "Key": "Level",
+        "Url": "res/Config/Level.json"
     },
     { 
-        "id": 1002,
-        "Type": "1",
+        "id": 2,
+        "Key": "Action_1",
         "Url": "res/Config/Action_1.json"
     },
     { 
-        "id": 1003,
-        "Type": "2",
-        "Url": "res/Config/Action_2.json",
-        "FloatTest": 2.600,
-        "BoolTest": true
+        "id": 3,
+        "Key": "Action_2",
+        "Url": "res/Config/Action_2.json"
+    },
+    { 
+        "id": 4,
+        "Key": "Prize",
+        "Url": "res/Config/Prize.json"
     }
 ]

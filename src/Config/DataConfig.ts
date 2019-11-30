@@ -4,7 +4,7 @@ import LocalConfig from "./LocalConfig";
 
 export interface JsonHot{
     id:number;
-    Type:string;
+    Key:string;
     Url:string;
 }
 
@@ -21,9 +21,10 @@ export const LOCALCONFIG_KEY = {
 export class DataConfig{
     public static IsConfigLoaded = false;   //是否已加载配置
     protected static JSONHOT_URL  = 'res/Config/JsonHot.json';
-    //配置id，须与res/Config/JsonHot.Type相同
-    public static DESK_ACTION_KEY = "DeskAction";
+    //配置id，须与res/Config/JsonHot.Key相同
+    public static LEVEL_KEY = "Level";
     public static ACTION_KEY_PREFIX = "Action_";
+    public static PRIZE_KEY = "Prize";
     public static JSON_CONFIGS = "json_configs";
 
     private static _instance : DataConfig;
@@ -48,7 +49,7 @@ export class DataConfig{
 
     protected configData:{[key:string]:Array<any>} = {};
 
-    protected loadConfig(url:string, key:string, cb?:Function) : void {
+    protected loadConfig(url:string, key:string, cb?:Function) {
         Common.Resource.load(url, this, config=>{
             config = JSON.stringify(config);
             var configJson = JSON.parse(config);
@@ -58,7 +59,7 @@ export class DataConfig{
         });
     }
 
-    public initConfig(cb?:Function) : void {
+    public initConfig(cb?:Function) {
         Laya.loader.load(DataConfig.JSONHOT_URL, Laya.Handler.create(this, config=>{
             config = JSON.stringify(config);
             let hotJsons:JsonHot[] = JSON.parse(config);
@@ -66,9 +67,9 @@ export class DataConfig{
                 let total = hotJsons.length;
                 hotJsons.forEach((cfg, idx)=>{
                     if(idx >= total - 1){
-                        this.loadConfig(cfg.Url, cfg.Type, cb);
+                        this.loadConfig(cfg.Url, cfg.Key, cb);
                     }else{
-                        this.loadConfig(cfg.Url, cfg.Type);
+                        this.loadConfig(cfg.Url, cfg.Key);
                     }
                 });
             }
