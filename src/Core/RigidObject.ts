@@ -7,7 +7,7 @@ export class RigidObject{
     private _obj:Laya.MeshSprite3D;
     private _objKey:string;
     StateList:Config.Dictionary<Core.ObjectState> = {};
-    State:Manager.StateBase;
+    State:Core.StateMachine;
     Rigid3D:Laya.Rigidbody3D;
 
     constructor(key:string, obj:Laya.MeshSprite3D, ...states:Core.ObjectState[]){
@@ -18,8 +18,7 @@ export class RigidObject{
         
         this._objKey = key;
         this.Obj = obj;
-        this.State = new Manager.StateBase();
-        this.initStateList(...states);
+        this.State = new Core.StateMachine(...states);
         this.Rigid3D = obj.getComponent(Laya.Rigidbody3D);
         if(!this.Rigid3D){
             console.error("Rigid Object miss rigidbody3d!");
@@ -48,7 +47,7 @@ export class RigidObject{
     }
 
     get CurState(){
-        return this.State.curState;
+        return this.State.CurState;
     }
 
     get IsStop(){
@@ -75,8 +74,7 @@ export class RigidObject{
 
     dispose(){
         this.returnObjToPool();
-        this.changeState(Config.StateConfig.NONE);
-        this.StateList = {};
+        this.State.destroyState();
     }
 
     returnObjToPool(){
@@ -114,14 +112,6 @@ export class RigidObject{
         this.Obj.transform.position = pos;
     }
 
-    initStateList(...states:Core.ObjectState[]){
-        if(!states) return;
-        
-        states.forEach(s=>{
-            this.StateList[s.State] = s;
-        }, this);
-    }
-
     changeState(state:string){
         if(!state) return;
 
@@ -131,7 +121,6 @@ export class RigidObject{
     updateState(){
         if(!this.StateList || !this.Obj || !this.Obj.active) return;
 
-        let state = this.StateList[this.CurState];
-        state && state.Update(this);
+        this.State.Update(this);
     }
 }

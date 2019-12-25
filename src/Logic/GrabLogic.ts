@@ -40,6 +40,7 @@ export class GrabLogic extends Common.EventDispather {
             new Core.ObjectState(Config.StateConfig.MOVE_FORWARD, this.handForward.bind(this)),
             new Core.ObjectState(Config.StateConfig.MOVE_BACK, this.handBack.bind(this)),
             new Core.ObjectState(Config.StateConfig.BACK_PASSED, this.handBack.bind(this)),
+            new Core.ObjectState(Config.StateConfig.IDEL),
         );
         this.HandClass.setPosition(Config.ObjectConfig.HAND_POS);
         this.addCollisionScript();
@@ -50,6 +51,7 @@ export class GrabLogic extends Common.EventDispather {
         this.IsCombo = false;
         this.createTimeLine();
         this.loadConfig();
+        this.resetHand();
         this.moveDesk();
     }
 
