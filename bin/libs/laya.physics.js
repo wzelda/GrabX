@@ -1562,7 +1562,12 @@ window.box2d=box2d;
             return this._def;
         }
         _onEnable() {
-            this.rigidBody || Laya.Laya.systemTimer.callLater(this, this._checkRigidBody);
+            if (this.rigidBody) {
+                this.refresh();
+            }
+            else {
+                Laya.Laya.systemTimer.callLater(this, this._checkRigidBody);
+            }
         }
         _checkRigidBody() {
             if (!this.rigidBody) {
@@ -3193,4 +3198,4 @@ window.box2d=box2d;
     exports.WeldJoint = WeldJoint;
     exports.WheelJoint = WheelJoint;
 
-}(window.Laya = window.Laya|| {}, Laya));
+}(window.Laya = window.Laya || {}, Laya));

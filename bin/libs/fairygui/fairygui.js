@@ -39,7 +39,7 @@ window.fairygui = window.fgui;
                 this.internalCreateObject(pi);
             }
             else
-                throw new Error("namespace sunnyboxs found: " + pkgName);
+                throw new Error("package not found: " + pkgName);
         }
         createObjectFromURL(url) {
             var pi = fgui.UIPackage.getItemByURL(url);
@@ -148,7 +148,6 @@ window.fairygui = window.fgui;
                 di = this._itemList[this._index];
                 if (di.packageItem != null) {
                     obj = fgui.UIObjectFactory.newObject(di.packageItem);
-                    obj.packageItem = di.packageItem;
                     this._objectPool.push(obj);
                     fgui.UIPackage._constructing++;
                     if (di.packageItem.type == fgui.PackageItemType.Component) {
@@ -1695,7 +1694,6 @@ window.fairygui = window.fgui;
     class GTextField extends fgui.GObject {
         constructor() {
             super();
-            this._gearColor = new fgui.GearColor(this);
         }
         get font() {
             return null;
@@ -1844,11 +1842,6 @@ window.fairygui = window.fgui;
         flushVars() {
             this.text = this._text;
         }
-        handleControllerChanged(c) {
-            super.handleControllerChanged(c);
-            if (this._gearColor.controller == c)
-                this._gearColor.apply();
-        }
         getProp(index) {
             switch (index) {
                 case fgui.ObjectPropID.Color:
@@ -1995,8 +1988,7 @@ window.fairygui = window.fgui;
         set color(value) {
             if (this._color != value) {
                 this._color = value;
-                if (this._gearColor.controller)
-                    this._gearColor.updateState();
+                this.updateGear(4);
                 if (this.grayed)
                     this._textField.color = "#AAAAAA";
                 else
@@ -2062,8 +2054,10 @@ window.fairygui = window.fgui;
             return this._textField.strokeColor;
         }
         set strokeColor(value) {
-            this._textField.strokeColor = value;
-            this.updateGear(4);
+            if (this._textField.strokeColor != value) {
+                this._textField.strokeColor = value;
+                this.updateGear(4);
+            }
         }
         updateAutoSize() {
             this._textField.wordWrap = !this._widthAutoSize && !this._singleLine;
@@ -2323,7 +2317,7 @@ window.fairygui = window.fgui;
                     if (glyph != null) {
                         charIndent = (line.height + line.textHeight) / 2 - Math.ceil(glyph.lineHeight * fontScale);
                         if (glyph.texture) {
-                            gr.drawTexture(glyph.texture, charX + lineIndent + Math.ceil(glyph.x * fontScale), line.y + charIndent + Math.ceil(glyph.y * fontScale), glyph.xMax * fontScale, glyph.yMax * fontScale, null, 1, color);
+                            gr.drawTexture(glyph.texture, charX + lineIndent + Math.ceil(glyph.x * fontScale), line.y + charIndent + Math.ceil(glyph.y * fontScale), glyph.width * fontScale, glyph.height * fontScale, null, 1, color);
                         }
                         charX += this._letterSpacing + Math.ceil(glyph.advance * fontScale);
                     }
@@ -3291,9 +3285,10 @@ window.fairygui = window.fgui;
             this.constructFromResource2(null, 0);
         }
         constructFromResource2(objectPool, poolIndex) {
-            if (!this.packageItem.decoded) {
-                this.packageItem.decoded = true;
-                fgui.TranslationHelper.translateComponent(this.packageItem);
+            var contentItem = this.packageItem.getBranch();
+            if (!contentItem.decoded) {
+                contentItem.decoded = true;
+                fgui.TranslationHelper.translateComponent(contentItem);
             }
             var i;
             var dataLen;
@@ -3303,7 +3298,7 @@ window.fairygui = window.fgui;
             var f2;
             var i1;
             var i2;
-            var buffer = this.packageItem.rawData;
+            var buffer = contentItem.rawData;
             buffer.seek(0, 0);
             this._underConstruct = true;
             this.sourceWidth = buffer.getInt32();
@@ -3370,12 +3365,11 @@ window.fairygui = window.fgui;
                         if (pkgId != null)
                             pkg = fgui.UIPackage.getById(pkgId);
                         else
-                            pkg = this.packageItem.owner;
+                            pkg = contentItem.owner;
                         pi = pkg != null ? pkg.getItemById(src) : null;
                     }
                     if (pi != null) {
                         child = fgui.UIObjectFactory.newObject(pi);
-                        child.packageItem = pi;
                         child.constructFromResource();
                     }
                     else
@@ -3420,7 +3414,7 @@ window.fairygui = window.fgui;
             i2 = buffer.getInt32();
             var hitArea;
             if (hitTestId) {
-                pi = this.packageItem.owner.getItemById(hitTestId);
+                pi = contentItem.owner.getItemById(hitTestId);
                 if (pi && pi.pixelHitTestData)
                     hitArea = new fgui.PixelHitTest(pi.pixelHitTestData, i1, i2);
             }
@@ -3451,7 +3445,7 @@ window.fairygui = window.fgui;
             this._underConstruct = false;
             this.buildNativeDisplayList();
             this.setBoundsChangedFlag();
-            if (this.packageItem.objectType != fgui.ObjectType.Component)
+            if (contentItem.objectType != fgui.ObjectType.Component)
                 this.constructExtension(buffer);
             this.onConstruct();
         }
@@ -4358,7 +4352,7 @@ window.fairygui = window.fgui;
             this.updateGraph();
         }
         drawRegularPolygon(lineSize, lineColor, fillColor, sides, startAngle = 0, distances = null) {
-            this._type = 3;
+            this._type = 4;
             this._lineSize = lineSize;
             this._lineColor = lineColor;
             this._fillColor = fillColor;
@@ -4368,7 +4362,7 @@ window.fairygui = window.fgui;
             this.updateGraph();
         }
         drawPolygon(lineSize, lineColor, fillColor, points) {
-            this._type = 4;
+            this._type = 3;
             this._lineSize = lineSize;
             this._lineColor = lineColor;
             this._fillColor = fillColor;
@@ -4388,6 +4382,7 @@ window.fairygui = window.fgui;
         }
         set color(value) {
             this._fillColor = value;
+            this.updateGear(4);
             if (this._type != 0)
                 this.updateGraph();
         }
@@ -4425,7 +4420,7 @@ window.fairygui = window.fgui;
                         ["arcTo", 0, 0, this._cornerRadius[0], 0, this._cornerRadius[0]],
                         ["closePath"]
                     ];
-                    gr.drawPath(0, 0, paths, { fillStyle: fillColor }, this._lineSize > 0 ? { strokeStyle: lineColor, lineWidth: this._lineSize } : null);
+                    gr.drawPath(0, 0, paths, fillColor != null ? { fillStyle: fillColor } : null, this._lineSize > 0 ? { strokeStyle: lineColor, lineWidth: this._lineSize } : null);
                 }
                 else
                     gr.drawRect(0, 0, w, h, fillColor, this._lineSize > 0 ? lineColor : null, this._lineSize);
@@ -5828,9 +5823,9 @@ window.fairygui = window.fgui;
             if (this._virtual) {
                 var lineCount = Math.ceil(itemCount / this._curLineItemCount);
                 if (this._layout == fgui.ListLayoutType.SingleColumn || this._layout == fgui.ListLayoutType.FlowHorizontal)
-                    this.viewHeight = this.lineCount * this._itemSize.y + Math.max(0, this.lineCount - 1) * this._lineGap;
+                    this.viewHeight = lineCount * this._itemSize.y + Math.max(0, lineCount - 1) * this._lineGap;
                 else
-                    this.viewWidth = this.lineCount * this._itemSize.x + Math.max(0, this.lineCount - 1) * this._columnGap;
+                    this.viewWidth = lineCount * this._itemSize.x + Math.max(0, lineCount - 1) * this._columnGap;
             }
             else if (itemCount == 0) {
                 if (this._layout == fgui.ListLayoutType.SingleColumn || this._layout == fgui.ListLayoutType.FlowHorizontal)
@@ -8052,58 +8047,78 @@ window.fairygui = window.fgui;
             this._div.style.fontSize = value;
         }
         get color() {
-            return this._color;
+            return this._div.style.color;
         }
         set color(value) {
-            if (this._color != value) {
-                this._color = value;
+            if (this._div.style.color != value) {
                 this._div.style.color = value;
-                if (this._gearColor.controller)
-                    this._gearColor.updateState();
+                this.refresh();
+                this.updateGear(4);
             }
         }
         get align() {
             return this._div.style.align;
         }
         set align(value) {
-            this._div.style.align = value;
+            if (this._div.style.align != value) {
+                this._div.style.align = value;
+                this.refresh();
+            }
         }
         get valign() {
             return this._div.style.valign;
         }
         set valign(value) {
-            this._div.style.valign = value;
+            if (this._div.style.valign != value) {
+                this._div.style.valign = value;
+                this.refresh();
+            }
         }
         get leading() {
             return this._div.style.leading;
         }
         set leading(value) {
-            this._div.style.leading = value;
+            if (this._div.style.leading != value) {
+                this._div.style.leading = value;
+                this.refresh();
+            }
         }
         get bold() {
             return this._div.style.bold;
         }
         set bold(value) {
-            this._div.style.bold = value;
+            if (this._div.style.bold != value) {
+                this._div.style.bold = value;
+                this.refresh();
+            }
         }
         get italic() {
             return this._div.style.italic;
         }
         set italic(value) {
-            this._div.style.italic = value;
+            if (this._div.style.italic != value) {
+                this._div.style.italic = value;
+                this.refresh();
+            }
         }
         get stroke() {
             return this._div.style.stroke;
         }
         set stroke(value) {
-            this._div.style.stroke = value;
+            if (this._div.style.stroke != value) {
+                this._div.style.stroke = value;
+                this.refresh();
+            }
         }
         get strokeColor() {
             return this._div.style.strokeColor;
         }
         set strokeColor(value) {
-            this._div.style.strokeColor = value;
-            this.updateGear(4);
+            if (this._div.style.strokeColor != value) {
+                this._div.style.strokeColor = value;
+                this.refresh();
+                this.updateGear(4);
+            }
         }
         set ubbEnabled(value) {
             this._ubbEnabled = value;
@@ -8116,6 +8131,10 @@ window.fairygui = window.fgui;
             if (w > 0)
                 w += 8;
             return w;
+        }
+        refresh() {
+            if (this._text.length > 0 && this._div._refresh)
+                this._div._refresh();
         }
         updateAutoSize() {
             this._div.style.wordWrap = !this._widthAutoSize;
@@ -8366,9 +8385,6 @@ window.fairygui = window.fgui;
                     this.removeChild(this._tooltipWin);
                 this._tooltipWin = null;
             }
-        }
-        getObjectUnderPoint(globalX, globalY) {
-            return null;
         }
         get focus() {
             if (this._focusedObject && !this._focusedObject.onStage)
@@ -8969,6 +8985,10 @@ window.fairygui = window.fgui;
         }
         get textWidth() {
             return this._input.textWidth;
+        }
+        requestFocus() {
+            this._input.focus = true;
+            super.requestFocus();
         }
         handleSizeChanged() {
             this._input.size(this._width, this._height);
@@ -12984,6 +13004,8 @@ window.fairygui = window.fgui;
                                     buffer.skip(2);
                                 if ((value = compStrings[elementId + "-" + j + "-0"]) != null)
                                     buffer.writeS(value);
+                                else
+                                    buffer.skip(2);
                                 if (buffer.version >= 2) {
                                     buffer.skip(6);
                                     buffer.skip(buffer.getUint16() * 4);
@@ -13116,11 +13138,21 @@ window.fairygui = window.fgui;
             if (extensionType)
                 pi.extensionType = extensionType;
         }
-        static newObject(pi) {
-            if (pi.extensionType)
-                return new pi.extensionType();
+        static newObject(pi, userClass) {
+            var obj;
+            if (pi.type == fgui.PackageItemType.Component) {
+                if (userClass)
+                    obj = new userClass();
+                else if (pi.extensionType)
+                    obj = new pi.extensionType();
+                else
+                    obj = UIObjectFactory.newObject2(pi.objectType);
+            }
             else
-                return UIObjectFactory.newObject2(pi.objectType);
+                obj = UIObjectFactory.newObject2(pi.objectType);
+            if (obj)
+                obj.packageItem = pi;
+            return obj;
         }
         static newObject2(type) {
             switch (type) {
@@ -13209,7 +13241,7 @@ window.fairygui = window.fgui;
             if (!descData) {
                 descData = fgui.AssetProxy.inst.getRes(resKey + "." + fgui.UIConfig.packageFileExtension);
                 if (!descData || descData.byteLength == 0)
-                    throw new Error("namespace sunnyboxs not ready: " + resKey);
+                    throw new Error("resource '" + resKey + "' not found");
             }
             var buffer = new fgui.ByteBuffer(descData);
             var pkg = new UIPackage();
@@ -13246,11 +13278,15 @@ window.fairygui = window.fgui;
                         UIPackage._instByName[pkg.name] = pkg;
                         UIPackage._instByName[pkg._resKey] = pkg;
                         completeHandler.runWith(pkg);
-                    }));
+                    }, null, true));
                 }
-                else
+                else {
+                    UIPackage._instById[pkg.id] = pkg;
+                    UIPackage._instByName[pkg.name] = pkg;
+                    UIPackage._instByName[pkg._resKey] = pkg;
                     completeHandler.runWith(pkg);
-            });
+                }
+            }, null, true);
             fgui.AssetProxy.inst.load(url, descCompleteHandler, null, Laya.Loader.BUFFER);
         }
         static removePackage(packageIdOrName) {
@@ -13338,7 +13374,7 @@ window.fairygui = window.fgui;
         }
         loadPackage(buffer) {
             if (buffer.getUint32() != 0x46475549)
-                throw new Error("FairyGUI: old namespace sunnyboxs found in '" + this._resKey + "'");
+                throw new Error("FairyGUI: old package format found in '" + this._resKey + "'");
             buffer.version = buffer.getInt32();
             var compressed = buffer.readBool();
             this._id = buffer.readUTFString();
@@ -13565,19 +13601,10 @@ window.fairygui = window.fgui;
                 return null;
         }
         internalCreateObject(item, userClass) {
-            var g;
-            if (item.type == fgui.PackageItemType.Component) {
-                if (userClass)
-                    g = new userClass();
-                else
-                    g = fgui.UIObjectFactory.newObject(item);
-            }
-            else
-                g = fgui.UIObjectFactory.newObject(item);
+            var g = fgui.UIObjectFactory.newObject(item, userClass);
             if (g == null)
                 return null;
             UIPackage._constructing++;
-            g.packageItem = item;
             g.constructFromResource();
             UIPackage._constructing--;
             return g;
@@ -13702,8 +13729,8 @@ window.fairygui = window.fgui;
                 var by = buffer.getInt32();
                 bg.x = buffer.getInt32();
                 bg.y = buffer.getInt32();
-                bgWidth = buffer.getInt32();
-                bgHeight = buffer.getInt32();
+                bg.width = buffer.getInt32();
+                bg.height = buffer.getInt32();
                 bg.advance = buffer.getInt32();
                 bg.channel = buffer.readByte();
                 if (bg.channel == 1)
@@ -13713,31 +13740,29 @@ window.fairygui = window.fgui;
                 else if (bg.channel == 3)
                     bg.channel = 1;
                 if (font.ttf) {
-                    bg.texture = Laya.Texture.create(mainTexture, bx + mainSprite.rect.x, by + mainSprite.rect.y, bgWidth, bgHeight);
+                    bg.texture = Laya.Texture.create(mainTexture, bx + mainSprite.rect.x, by + mainSprite.rect.y, bg.width, bg.height);
                     bg.lineHeight = lineHeight;
                 }
                 else {
                     var charImg = this._itemsById[img];
                     if (charImg) {
                         charImg = charImg.getBranch();
-                        bgWidth = charImg.width;
-                        bgHeight = charImg.height;
+                        bg.width = charImg.width;
+                        bg.height = charImg.height;
                         charImg = charImg.getHighResolution();
                         this.getItemAsset(charImg);
                         bg.texture = charImg.texture;
                     }
                     if (bg.advance == 0) {
                         if (xadvance == 0)
-                            bg.advance = bg.x + bgWidth;
+                            bg.advance = bg.x + bg.width;
                         else
                             bg.advance = xadvance;
                     }
-                    bg.lineHeight = bg.y < 0 ? bgHeight : (bg.y + bgHeight);
+                    bg.lineHeight = bg.y < 0 ? bg.height : (bg.y + bg.height);
                     if (bg.lineHeight < font.size)
                         bg.lineHeight = font.size;
                 }
-                bg.xMax = bg.x + bgWidth;
-                bg.yMax = bg.y + bgHeight;
                 buffer.pos = nextPos;
             }
         }
@@ -14108,8 +14133,8 @@ window.fairygui = window.fgui;
         constructor() {
             this.x = 0;
             this.y = 0;
-            this.xMax = 0;
-            this.yMax = 0;
+            this.width = 0;
+            this.height = 0;
             this.advance = 0;
             this.lineHeight = 0;
             this.channel = 0;

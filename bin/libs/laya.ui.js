@@ -166,7 +166,9 @@
 	        this.resetLayoutY();
 	    }
 	    _onParentResize() {
-	        if (this.resetLayoutX() || this.resetLayoutY())
+	        var flagX = this.resetLayoutX();
+	        var flagY = this.resetLayoutY();
+	        if (flagX || flagY)
 	            this.owner.event(Laya.Event.RESIZE);
 	    }
 	    resetLayoutX() {
@@ -6068,4 +6070,4 @@
 	exports.WXOpenDataViewer = WXOpenDataViewer;
 	exports.Widget = Widget;
 
-}(window.Laya = window.Laya|| {}, Laya));
+}(window.Laya = window.Laya || {}, Laya));

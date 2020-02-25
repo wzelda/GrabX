@@ -1540,4 +1540,4 @@
     exports.Layout = Layout;
     exports.LayoutLine = LayoutLine;
 
-}(window.Laya = window.Laya|| {}, Laya));
+}(window.Laya = window.Laya || {}, Laya));
